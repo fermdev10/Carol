@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#1d0a16">
 <title>Para Carol ♡</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="shortcut icon" href="rosa.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <style>
@@ -41,6 +42,12 @@
       radial-gradient(30% 24% at 72% 62%, rgba(240,197,133,.12), transparent 70%);
     animation:aurora 22s ease-in-out infinite alternate}
   @keyframes aurora{to{transform:translate(8%,-6%) rotate(12deg)}}
+  /* grano de película + viñeta: da el acabado "de cine" a todo */
+  body::after{content:"";position:fixed;inset:0;z-index:15;pointer-events:none;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      radial-gradient(130% 95% at 50% 45%, transparent 55%, rgba(8,2,6,.55) 100%);
+    background-size:160px 160px, 100% 100%;opacity:.38}
 
   #stage{position:fixed;inset:0;height:100dvh}
   canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
@@ -48,8 +55,14 @@
   #confetti{z-index:20}
 
   /* ---------- progreso y controles ---------- */
-  #progress{position:fixed;z-index:30;left:16px;right:16px;top:calc(env(safe-area-inset-top,0px) + 10px);height:2px;border-radius:2px;background:rgba(255,255,255,.14);overflow:hidden;opacity:0;transition:opacity 1s}
-  #progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--rose));transition:width 1.2s ease}
+  /* barra tipo "stories": un segmento por escena que se llena con su duración */
+  #progress{position:fixed;z-index:30;left:14px;right:14px;top:calc(env(safe-area-inset-top,0px) + 10px);display:flex;gap:3px;opacity:0;transition:opacity 1s}
+  #progress b{flex:1;height:2px;border-radius:2px;background:rgba(255,255,255,.16);overflow:hidden}
+  #progress b i{display:block;height:100%;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,var(--gold),#ffe9c2);box-shadow:0 0 6px rgba(240,197,133,.8)}
+  #progress b.done i{transform:none}
+  #progress b.now i{animation:fill var(--dur,6s) linear both}
+  @keyframes fill{to{transform:none}}
+  body.paused #progress b.now i{animation-play-state:paused}
   body.started #progress{opacity:1}
   #pausedTag{position:fixed;z-index:30;left:50%;top:calc(env(safe-area-inset-top,0px) + 24px);transform:translateX(-50%);font:600 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);opacity:0;transition:opacity .3s}
   body.paused #pausedTag{opacity:1}
@@ -65,35 +78,57 @@
   /* ---------- escenas ---------- */
   .scene{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;
     padding:calc(env(safe-area-inset-top,0px) + 40px) 24px calc(env(safe-area-inset-bottom,0px) + 40px);
-    text-align:center;opacity:0;visibility:hidden;transition:opacity .9s ease, visibility 0s linear .9s}
-  .scene.active{opacity:1;visibility:visible;transition:opacity .9s ease .25s, visibility 0s}
-  .scene.leaving{opacity:0;transition:opacity .8s ease}
+    text-align:center;opacity:0;visibility:hidden;transform:scale(1.04);transition:opacity .9s ease, transform .9s ease, visibility 0s linear .9s}
+  .scene.active{opacity:1;visibility:visible;transform:none;transition:opacity 1.1s ease .25s, transform 1.8s cubic-bezier(.2,.7,.2,1) .25s, visibility 0s}
+  .scene.leaving{opacity:0;transform:scale(.97);transition:opacity .8s ease, transform .9s cubic-bezier(.5,0,.7,.4)}
   .scene.bleed{padding:0}
   .scene *{animation-fill-mode:both}
   .scene img{pointer-events:none;-webkit-user-drag:none;user-select:none}
 
   /* líneas de texto */
-  .l{opacity:0;font-size:clamp(24px,7vw,34px);line-height:1.2;font-weight:500;max-width:15em;margin:.25em 0}
-  .l.big{font-size:clamp(36px,11vw,54px);font-style:italic;font-weight:500;line-height:1.05;color:#fff;margin:.2em 0}
-  .l.small{font-family:var(--sans);font-size:clamp(14px,3.9vw,16px);font-weight:400;line-height:1.5;color:var(--muted);max-width:22em;margin-top:.9em}
-  .l.gold{color:var(--gold)}
-  .active .l{animation:rise 1.4s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 1.5s + .4s)}
+  .l{opacity:0;font-size:clamp(24px,7vw,34px);line-height:1.2;font-weight:500;max-width:15em;margin:.25em 0;text-wrap:balance;letter-spacing:.005em}
+  .l.big{font-size:clamp(38px,11.5vw,58px);font-style:italic;font-weight:500;line-height:1.02;letter-spacing:-.01em;color:#fff;margin:.2em 0;text-shadow:0 0 40px rgba(244,169,163,.35)}
+  .l.small{font-family:var(--sans);font-size:clamp(14px,3.9vw,16px);font-weight:400;line-height:1.55;letter-spacing:.01em;color:var(--muted);max-width:22em;margin-top:1.1em}
+  /* adorno fino antes del texto pequeño */
+  .l.small::before{content:"";display:block;width:34px;height:1px;margin:0 auto 14px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+  .l.gold{color:transparent;background:linear-gradient(100deg,#ffe9c2,var(--gold) 40%,var(--rose) 80%);-webkit-background-clip:text;background-clip:text;text-shadow:none!important;filter:drop-shadow(0 2px 18px rgba(0,0,0,.5)) drop-shadow(0 0 22px rgba(240,197,133,.3))}
+  .active .l.gold{animation-name:riseGold}
+  @keyframes riseGold{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .active .l{animation:rise 1.4s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0) * 1.5s + .4s + var(--wait,0s))}
   @keyframes rise{from{opacity:0;transform:translateY(16px);filter:blur(10px)}to{opacity:1;transform:none;filter:blur(0)}}
 
   .hint{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 68px);left:0;right:0;font:500 11px/1.9 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:rgba(248,239,232,.45);opacity:0}
   .hint span{display:block;letter-spacing:.1em;text-transform:none;font-size:12px;color:rgba(248,239,232,.35)}
-  .active .hint{animation:fadeIn 1.2s ease 5s both, breathe 2.4s ease-in-out 6.2s infinite}
+  .active .hint{animation:fadeIn 1.2s ease calc(5s + var(--wait,0s)) both, breathe 2.4s ease-in-out calc(6.2s + var(--wait,0s)) infinite}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   @keyframes fadeOut{from{opacity:1}to{opacity:0}}
   @keyframes breathe{50%{opacity:.4}}
 
   /* ---------- intro ---------- */
-  #intro .heart{width:86px;height:86px;margin-bottom:34px;filter:drop-shadow(0 0 22px rgba(244,169,163,.6));animation:beat 1.6s ease-in-out infinite}
+  .heartwrap{position:relative;width:86px;height:86px;margin-bottom:38px;animation:fadeIn 1.6s ease .2s both}
+  #intro .heart{position:relative;z-index:1;width:100%;height:100%;filter:drop-shadow(0 0 22px rgba(244,169,163,.6));animation:beat 1.6s ease-in-out infinite}
   @keyframes beat{0%,100%{transform:scale(1)}14%{transform:scale(1.13)}28%{transform:scale(1)}42%{transform:scale(1.08)}56%{transform:scale(1)}}
-  #intro h1{font-weight:500;font-style:italic;font-size:clamp(46px,14vw,66px);line-height:1}
-  #intro p{font-family:var(--sans);font-size:15px;color:var(--muted);margin-top:14px;line-height:1.5}
-  #start{margin-top:42px;font:500 16px/1 var(--sans);letter-spacing:.06em;color:var(--bg);background:linear-gradient(135deg,var(--gold),var(--rose));border:0;border-radius:999px;padding:17px 30px;box-shadow:0 10px 40px -10px rgba(240,197,133,.7);animation:glow 2.6s ease-in-out infinite}
-  @keyframes glow{50%{box-shadow:0 10px 50px -4px rgba(244,169,163,.85)}}
+  /* ondas que salen del corazón con cada latido */
+  .halo{position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(244,169,163,.55);opacity:0;animation:halo 1.6s cubic-bezier(.2,.6,.3,1) infinite}
+  .halo:nth-child(2){animation-delay:.22s;border-color:rgba(240,197,133,.4)}
+  @keyframes halo{0%{opacity:0;transform:scale(.6)}14%{opacity:.9}100%{opacity:0;transform:scale(2.3)}}
+  #intro h1{font-weight:500;font-style:italic;font-size:clamp(50px,15vw,72px);line-height:1;letter-spacing:-.015em;color:#fff;text-shadow:0 0 50px rgba(244,169,163,.35)}
+  #intro h1 span{display:inline-block;animation:letterIn 1.2s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(.5s + var(--c) * .07s)}
+  @keyframes letterIn{from{opacity:0;transform:translateY(.35em);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+  #intro h1::after{content:"";display:block;width:64px;height:1px;margin:22px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:lineIn 1.4s cubic-bezier(.2,.7,.2,1) 1.5s both}
+  @keyframes lineIn{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:none}}
+  #intro p{font-family:var(--sans);font-size:15px;letter-spacing:.02em;color:var(--muted);margin-top:18px;line-height:1.6;animation:rise 1.4s ease 1.8s both}
+  #start{position:relative;overflow:hidden;margin-top:44px;font:600 13px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--bg);
+    background:linear-gradient(135deg,#ffe9c2,var(--gold) 45%,var(--rose));border:0;border-radius:999px;padding:19px 34px;
+    box-shadow:0 10px 40px -10px rgba(240,197,133,.7),inset 0 1px 0 rgba(255,255,255,.6);animation:rise 1.2s ease 2.3s both, glow 2.6s ease-in-out 3.5s infinite}
+  /* destello que recorre el botón */
+  #start::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:50%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-20deg);animation:sweep 3.2s ease-in-out 3.2s infinite}
+  @keyframes sweep{0%{left:-60%}45%,100%{left:130%}}
+  @keyframes glow{50%{box-shadow:0 10px 50px -4px rgba(244,169,163,.85),inset 0 1px 0 rgba(255,255,255,.6)}}
+  /* destello de luz al pulsar "empezar" */
+  #bloom{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 62%,rgba(255,240,220,.95),rgba(244,169,163,.55) 28%,rgba(var(--bg-rgb),0) 62%)}
+  #bloom.on{animation:bloom 1.8s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes bloom{0%{opacity:0;transform:scale(.3)}25%{opacity:1}100%{opacity:0;transform:scale(2.6)}}
   #intro small{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 28px);font:400 12px/1.4 var(--sans);color:rgba(248,239,232,.42);padding:0 30px}
 
   /* ---------- cumpleaños ---------- */
@@ -110,28 +145,46 @@
   .active.bday .sub{animation:rise 1.4s ease 2.4s both}
 
   /* ---------- fotos: comunes ---------- */
-  .tag{font:600 11px/1.4 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--gold);opacity:0;margin-bottom:22px;max-width:30em}
+  .tag{font:600 10.5px/1.4 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--gold);opacity:0;margin-bottom:22px;max-width:30em}
   .active .tag{animation:rise 1s ease .2s both}
+  /* "Recuerdo nº X" entre dos filetes dorados */
+  .tag span{display:inline-flex;align-items:center;gap:12px;text-shadow:0 1px 10px rgba(0,0,0,.6)}
+  .tag span::before,.tag span::after{content:"";width:26px;height:1px;background:linear-gradient(90deg,transparent,currentColor)}
+  .tag span::after{transform:scaleX(-1)}
+  .active .tag span::before,.active .tag span::after{animation:lineIn 1.2s cubic-bezier(.2,.7,.2,1) .5s both}
   /* título del recuerdo, debajo de "Recuerdo nº X" */
   .tag b{display:block;margin-top:8px;font:italic 500 clamp(30px,8.6vw,40px)/1.05 var(--serif);letter-spacing:.01em;text-transform:none;
     background:linear-gradient(100deg,#fff 0%,#ffe2a8 35%,var(--rose) 70%,#fff 100%);background-size:220% 100%;
     -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 14px rgba(0,0,0,.55))}
   .active .tag b{animation:titleIn 1.2s cubic-bezier(.2,.7,.2,1) .6s both, shimmer 6s linear 1.8s infinite}
   @keyframes titleIn{from{opacity:0;transform:translateY(14px) scale(.96);filter:blur(8px) drop-shadow(0 2px 14px rgba(0,0,0,.55))}to{opacity:1;transform:none;filter:blur(0) drop-shadow(0 2px 14px rgba(0,0,0,.55))}}
-  .cap{font-family:var(--hand);font-size:clamp(24px,6.8vw,30px);line-height:1.15;color:var(--ink);max-width:15em;margin-top:24px;opacity:0}
+  .cap{font-family:var(--hand);font-size:clamp(25px,7vw,31px);line-height:1.12;color:var(--ink);max-width:15em;margin-top:24px;opacity:0;text-wrap:balance}
   .active .cap{animation:write 2.2s ease-out 1.9s both}
   @keyframes write{from{opacity:0;clip-path:inset(0 100% 0 0)}10%{opacity:1}to{opacity:1;clip-path:inset(0 0 0 0)}}
-  .cap small{display:block;font-family:var(--sans);font-size:13px;color:var(--muted);margin-top:8px;line-height:1.4}
+  .cap small{display:block;font:italic 400 clamp(16px,4.4vw,18px)/1.4 var(--serif);letter-spacing:.01em;color:rgba(248,239,232,.78);margin-top:10px;text-wrap:balance}
 
   .full{position:absolute;inset:0;overflow:hidden}
   .full img{width:100%;height:100%;object-fit:cover;display:block}
-  .full::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--bg-rgb),.55) 0%,transparent 22%,transparent 50%,rgba(var(--bg-rgb),.93) 100%)}
+  .full::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--bg-rgb),.78) 0%,rgba(var(--bg-rgb),.35) 16%,transparent 30%,transparent 50%,rgba(var(--bg-rgb),.93) 100%)}
   .over{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;height:100%;width:100%;justify-content:space-between;
     padding:calc(env(safe-area-inset-top,0px) + 44px) 24px calc(env(safe-area-inset-bottom,0px) + 72px)}
   .over .cap{margin-top:0;text-shadow:0 2px 20px rgba(0,0,0,.6)}
 
-  .polaroid{position:relative;background:var(--paper);padding:10px 10px 14px;border-radius:3px;box-shadow:0 30px 60px -20px rgba(0,0,0,.75),0 2px 6px rgba(0,0,0,.3);opacity:0}
-  .polaroid img{display:block;width:min(80vw,380px);aspect-ratio:4/3;object-fit:cover}
+  .polaroid{position:relative;background:linear-gradient(160deg,#fffdf8,#f4ecdd);padding:10px 10px 16px;border-radius:3px;box-shadow:0 30px 60px -20px rgba(0,0,0,.75),0 2px 6px rgba(0,0,0,.3),inset 0 0 0 1px rgba(255,255,255,.6);opacity:0}
+  .polaroid img{display:block;width:min(80vw,380px);aspect-ratio:4/3;object-fit:cover;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+  /* trozo de cinta washi sujetando la foto */
+  .polaroid::before{content:"";position:absolute;z-index:2;top:-13px;left:50%;width:92px;height:26px;margin-left:-46px;transform:rotate(-4deg);
+    background:repeating-linear-gradient(45deg,rgba(255,255,255,.18) 0 6px,transparent 6px 12px),linear-gradient(180deg,rgba(244,200,160,.78),rgba(240,180,150,.72));
+    box-shadow:0 2px 5px rgba(0,0,0,.18);clip-path:polygon(0 8%,3% 0,97% 4%,100% 0,98% 50%,100% 100%,96% 94%,4% 100%,0 96%,2% 50%)}
+  .gstack .polaroid::before{width:70px;margin-left:-35px}
+  /* destello de luz cálida (light leak) al entrar en las fotos a pantalla completa */
+  .scene.bleed::before{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0;mix-blend-mode:screen;
+    background:linear-gradient(115deg,transparent 25%,rgba(255,170,110,.45) 42%,rgba(255,110,120,.3) 52%,transparent 68%);background-size:300% 100%}
+  .scene.bleed.active::before{animation:leak 3s ease-out .35s both}
+  @keyframes leak{0%{opacity:0;background-position:100% 0}30%{opacity:1}100%{opacity:0;background-position:0 0}}
+  /* marco fino dorado en las fotos a pantalla completa */
+  .full::before{content:"";position:absolute;z-index:1;inset:calc(env(safe-area-inset-top,0px) + 26px) 12px calc(env(safe-area-inset-bottom,0px) + 12px);border:1px solid rgba(240,197,133,.24);border-radius:4px;pointer-events:none}
+  .duo .b::before{display:none}
   .polaroid.tall img{width:auto;height:min(50dvh,94vw);aspect-ratio:3/4}
 
   /* 01 · el inicio: amanece desde negro */
@@ -273,6 +326,15 @@
   .scene:has(.bgphoto) .l.small{color:rgba(248,239,232,.85)}
   .bday:has(.bgphoto) .script, .bday:has(.bgphoto) .sub{text-shadow:0 2px 18px rgba(0,0,0,.7)}
   .bday:has(.bgphoto) .name{filter:drop-shadow(0 4px 22px rgba(0,0,0,.55))}
+  /* paisajes detrás de los recuerdos: más oscuros y cálidos para que la foto del recuerdo destaque */
+  .active .bgphoto.soft img{animation:bgSoft 18s ease-out both}
+  @keyframes bgSoft{from{transform:scale(1.18);filter:brightness(.25)}25%{filter:brightness(.95)}to{transform:scale(1.04);filter:brightness(.95)}}
+  .bgphoto.soft::after{background:
+      radial-gradient(65% 42% at 50% 48%,rgba(var(--bg-rgb),.55),rgba(var(--bg-rgb),.18) 80%),
+      linear-gradient(180deg,rgba(var(--bg-rgb),.62),transparent 26%,transparent 60%,rgba(var(--bg-rgb),.82)),
+      linear-gradient(0deg,rgba(176,70,128,.14),rgba(247,146,110,.08))}
+  .scene:has(.bgphoto.soft) .cap{text-shadow:0 2px 16px rgba(0,0,0,.75)}
+  .scene:has(.bgphoto.soft) .cap small{color:rgba(248,239,232,.86)}
 
   /* yo asomándome por la derecha */
   .peek{position:absolute;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:min(54vw,260px);transform-origin:100% 100%;opacity:0;visibility:hidden}
@@ -324,7 +386,7 @@
   .env-back{background:#e7d6bf;box-shadow:0 30px 60px -20px rgba(0,0,0,.7)}
   .env-front{background:linear-gradient(160deg,#f3e6d3,#e2cdb1);clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);z-index:3}
   .env-flap{background:linear-gradient(180deg,#e4d2b8,#cfb48f);clip-path:polygon(0 0,100% 0,50% 58%);z-index:4;transform-origin:top center;transition:transform .9s cubic-bezier(.5,0,.3,1)}
-  .seal{position:absolute;z-index:5;left:50%;top:50%;width:54px;height:54px;margin:-30px 0 0 -27px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d9534f,#9e2a2b 70%);display:grid;place-items:center;color:#f7d9c4;font-size:22px;box-shadow:0 3px 10px rgba(0,0,0,.35), inset 0 0 0 3px rgba(0,0,0,.12);transition:transform .5s ease,opacity .4s}
+  .seal{position:absolute;z-index:5;left:50%;top:50%;width:54px;height:54px;margin:-30px 0 0 -27px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e0625d,#a42f30 55%,#7e1f22 80%);display:grid;place-items:center;color:#f7d9c4;font-size:22px;text-shadow:0 -1px 0 rgba(0,0,0,.35);box-shadow:0 3px 10px rgba(0,0,0,.35), inset 0 0 0 4px rgba(0,0,0,.14), inset 0 0 0 6px rgba(255,255,255,.08), inset 3px 4px 6px rgba(255,255,255,.25);transition:transform .5s ease,opacity .4s}
   .env-peek{position:absolute;z-index:2;left:7%;right:7%;top:8%;bottom:8%;background:var(--paper);border-radius:4px;transition:transform 1s cubic-bezier(.3,0,.2,1) .6s}
   .tapme{font:500 12px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-top:34px;opacity:0}
   .active .tapme{animation:fadeIn 1s ease 2s both, breathe 2s ease-in-out 3s infinite}
@@ -342,8 +404,15 @@
     mask:radial-gradient(circle 13px at 0 57%,transparent 98%,#000) left/51% 100% no-repeat, radial-gradient(circle 13px at 100% 57%,transparent 98%,#000) right/51% 100% no-repeat;
     filter:drop-shadow(0 30px 40px rgba(0,0,0,.5))}
   .gift.opened .ticket{transition:opacity 1s ease 1.6s, transform 1.4s cubic-bezier(.2,1.3,.3,1) 1.6s;opacity:1;transform:none}
+  /* marco dorado interior y reflejo de lámina que recorre el vale */
+  .ticket::before{content:"";position:absolute;inset:8px;border:1px solid rgba(180,135,74,.4);border-radius:9px;pointer-events:none}
+  .ticket::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;opacity:0;
+    background:linear-gradient(110deg,transparent 35%,rgba(255,236,190,.75) 48%,rgba(255,255,255,.9) 50%,rgba(255,236,190,.75) 52%,transparent 65%);background-size:300% 100%}
+  .gift.opened .ticket::after{animation:foil 1.8s ease-in-out 2.9s both}
+  @keyframes foil{0%{opacity:1;background-position:100% 0}100%{opacity:1;background-position:0 0}}
   .ticket .kicker{font:700 10.5px/1 var(--sans);letter-spacing:.32em;text-transform:uppercase;color:#b4874a}
-  .ticket h2{font-family:var(--serif);font-weight:500;font-style:italic;font-size:clamp(38px,11vw,48px);line-height:1;margin:14px 0 4px;color:#4a1a33}
+  .ticket h2{font-family:var(--serif);font-weight:500;font-style:italic;font-size:clamp(38px,11vw,48px);line-height:1;margin:14px 0 4px;color:#4a1a33;
+    background:linear-gradient(100deg,#4a1a33 20%,#9b5a2e 50%,#4a1a33 80%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
   .ticket .for2{font-family:var(--hand);font-size:26px;color:#c0504d}
   .ticket .place{font:500 13px/1.45 var(--sans);color:#5b524b;margin-top:10px}
   .ticket .place b{display:block;font-size:15px;color:#2a2320;letter-spacing:.02em}
@@ -442,6 +511,7 @@
 <div id="pausedTag">en pausa</div>
 <div class="navflash" id="navL">‹</div>
 <div class="navflash" id="navR">›</div>
+<div id="bloom"></div>
 
 <!--
   ================================================================
@@ -459,19 +529,17 @@
 
   <!-- 0 · INTRO -->
   <section class="scene" id="intro" data-dur="wait">
-    <svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4a9a3"/><stop offset="1" stop-color="#f0c585"/></linearGradient></defs><path fill="url(#hg)" d="M12 21s-7.5-4.6-10-9.3C.3 8.4 2 4.5 5.6 4.1 8 3.8 9.9 5.2 12 7.4c2.1-2.2 4-3.6 6.4-3.3 3.6.4 5.3 4.3 3.6 7.6C19.5 16.4 12 21 12 21z"/></svg>
-    <h1>Hola, Carol.</h1>
-    <p>Esto es para ti.<br>Sube el volumen.</p>
+    <div class="heartwrap"><i class="halo"></i><i class="halo"></i><svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4a9a3"/><stop offset="1" stop-color="#f0c585"/></linearGradient></defs><path fill="url(#hg)" d="M12 21s-7.5-4.6-10-9.3C.3 8.4 2 4.5 5.6 4.1 8 3.8 9.9 5.2 12 7.4c2.1-2.2 4-3.6 6.4-3.3 3.6.4 5.3 4.3 3.6 7.6C19.5 16.4 12 21 12 21z"/></svg></div>
+    <h1 class="split">Hola, Carol.</h1>
+    <p>Esta web es para ti.</p>
     <button id="start">Toca aquí ♡</button>
   </section>
 
   <!-- 1 -->
-  <section class="scene" data-dur="9">
+  <section class="scene" data-dur="11" style="--wait:2s">
     <div class="bgphoto"><img src="img/fondo-playa.jpg" alt=""></div>
     <p class="l big">Hoy es un día importante.</p>
-    <p class="l">Y no por la comida.</p>
-    <p class="l small">(Bueno… un poco por la comida)</p>
-    <div class="hint">volver | seguir<span>toca izquierda/derecha · mantén para pausar</span></div>
+    <div class="hint"><span>Toca izquierda/derecha · mantén para pausar</span></div>
   </section>
 
   <!-- 2 -->
@@ -501,7 +569,7 @@
   <section class="scene bleed" data-dur="9.5">
     <div class="full dawn"><img src="img/inicio.jpg" alt=""></div>
     <div class="over">
-      <div class="tag">Recuerdo nº 01<b>Donde empezó todo</b></div>
+      <div class="tag"><span>Recuerdo nº 01</span><b>Donde empezó todo</b></div>
       <p class="cap">Después de taaanto tiempo, la vida decidió juntarnos.
         <small>Y aquí me di cuenta de que esta es la Carolina con la que quería un futuro.</small></p>
     </div>
@@ -509,7 +577,8 @@
 
   <!-- 02 PERRO (entra deslizando + huellas) -->
   <section class="scene" data-dur="9.5">
-    <div class="tag">Recuerdo nº 02<b>Mis niños</b></div>
+    <div class="bgphoto soft"><img src="img/paisaje-paseo-perro.jpg" alt=""></div>
+    <div class="tag"><span>Recuerdo nº 02</span><b>Mis niños</b></div>
     <div class="polaroid tall slide">
       <img src="img/perro.jpg" alt="">
       <div class="paws">
@@ -525,7 +594,8 @@
 
   <!-- 03 ACAMPADA (cremallera de la tienda) -->
   <section class="scene" data-dur="9.5">
-    <div class="tag">Recuerdo nº 03<b>De acampada</b></div>
+    <div class="bgphoto soft"><img src="img/paisaje-noche.jpg" alt=""></div>
+    <div class="tag"><span>Recuerdo nº 03</span><b>De acampada</b></div>
     <div class="zipwrap"><img src="img/acampada.jpg" alt=""><div class="zip"></div></div>
     <p class="cap">Tú probablemente soñando que tienes pollo infinito.
       <small>Yo despierto desde las siete con el cuello tieso. Pero qué mona estás durmiendo.</small></p>
@@ -533,7 +603,8 @@
 
   <!-- 04 SOFÁ (se enciende la tele) -->
   <section class="scene" data-dur="9.5">
-    <div class="tag">Recuerdo nº 04<b>Plan perfecto</b></div>
+    <div class="bgphoto soft"><img src="img/paisaje-atardecer.jpg" alt=""></div>
+    <div class="tag"><span>Recuerdo nº 04</span><b>Plan perfecto</b></div>
     <div class="tv"><img src="img/sofa.jpg" alt=""></div>
     <p class="cap">Sofá, peli y tú.
       <small>La peli la veo solo porque dices que soy muy cómodo.</small></p>
@@ -541,7 +612,8 @@
 
   <!-- 05 COCHE (polaroid que cae) -->
   <section class="scene" data-dur="9.5">
-    <div class="tag">Recuerdo nº 05<b>Fluyendo por Fuerteventura</b></div>
+    <div class="bgphoto soft"><img src="img/paisaje-fuerteventura.jpg" alt=""></div>
+    <div class="tag"><span>Recuerdo nº 05</span><b>Fluyendo por Fuerteventura</b></div>
     <div class="polaroid drop"><img src="img/coche.jpg" alt=""></div>
     <p class="cap">Yo conduciendo sin saber a dónde. Tú disfrutando de las vistas (nada).
       <small>Quiero tenerte de copiloto toooda la vida.</small></p>
@@ -552,7 +624,7 @@
     <div class="full"><img src="img/eclipse.jpg" alt=""></div>
     <div class="moon"></div>
     <div class="over">
-      <div class="tag">Recuerdo nº 06<b>12 de agosto</b></div>
+      <div class="tag"><span>Recuerdo nº 06</span><b>12 de agosto</b></div>
       <p class="cap">Un eclipse junto a ti.
         <small>Un momento perfecto para pedirte que fueras mi novia, pero algunas cosas lo impidieron.</small></p>
     </div>
@@ -560,7 +632,8 @@
 
   <!-- 07 PELUCHE (boing + sello de CULPABLE) -->
   <section class="scene" data-dur="10">
-    <div class="tag">Recuerdo nº 07<b>El culpable</b></div>
+    <div class="bgphoto soft"><img src="img/paisaje-de-la-mano.jpg" alt=""></div>
+    <div class="tag"><span>Recuerdo nº 07</span><b>El culpable</b></div>
     <div class="polaroid tall boing">
       <img src="img/peluche.jpg" alt="">
       <div class="guilty">Culpable</div>
@@ -573,7 +646,7 @@
   <section class="scene bleed" data-dur="9.5">
     <div class="full kb"><img src="img/playa.jpg" alt="" style="object-position:78% center"></div>
     <div class="over">
-      <div class="tag">Recuerdo nº 08<b>Mi mejor almohada</b></div>
+      <div class="tag"><span>Recuerdo nº 08</span><b>Mi mejor almohada</b></div>
       <p class="cap">Esto también cuenta como foto juntos.
         <small>No puedo explicar con palabras la felicidad de acostarme sobre ti.</small></p>
     </div>
@@ -581,14 +654,16 @@
 
   <!-- 12 · 08 SURF (cae y se tambalea) -->
   <section class="scene" data-dur="9.5">
-    <div class="tag">Recuerdo nº 09<b>Surfeando</b></div>
+    <div class="bgphoto soft"><img src="img/paisaje-cala.jpg" alt=""></div>
+    <div class="tag"><span>Recuerdo nº 09</span><b>Surfeando</b></div>
     <div class="polaroid tall wobble"><img src="img/surf.jpg" alt=""></div>
     <p class="cap">El día que no seamos el centro de atención en la playa, me preocuparé.</p>
   </section>
 
   <!-- 13 · 09 ESCALADA (se revela de abajo arriba) -->
   <section class="scene" data-dur="10">
-    <div class="tag">Recuerdo nº 10<b>Mi lapita siendo una lapita</b></div>
+    <div class="bgphoto soft"><img src="img/paisaje-famara.jpg" alt=""></div>
+    <div class="tag"><span>Recuerdo nº 10</span><b>Mi lapita siendo una lapita</b></div>
     <div class="climbwrap">
       <img src="img/escalada.jpg" alt="">
       <div class="holds">
@@ -606,7 +681,7 @@
   <section class="scene bleed" data-dur="10">
     <div class="full wave"><img src="img/atardecer-tabla.jpg" alt=""></div>
     <div class="over">
-      <div class="tag">Recuerdo nº 11<b>Tan pancha por la vida</b></div>
+      <div class="tag"><span>Recuerdo nº 11</span><b>Tan pancha por la vida</b></div>
       <p class="cap">Ya puede estar acabándose el mundo que tú puedes estar flotando en cualquier playa.
         <small>Por esto te elegí jajasjahs</small></p>
     </div>
@@ -621,7 +696,8 @@
 
   <!-- 16 · 11 IGLESIA (se abren las puertas) -->
   <section class="scene church" data-dur="10.5">
-    <div class="tag">Recuerdo nº 12<b>De romería</b></div>
+    <div class="bgphoto soft"><img src="img/paisaje-romeria.jpg" alt=""></div>
+    <div class="tag"><span>Recuerdo nº 12</span><b>De romería</b></div>
     <div class="arch">
       <div class="pic"><img src="img/iglesia.jpg" alt=""></div>
       <div class="door dl"></div><div class="door dr"></div>
@@ -632,6 +708,7 @@
 
   <!-- 13 · EL DÍA DEL "SÍ" (recuerdo especial: fecha, corazón, pétalos y etiquetas) -->
   <section class="scene special" data-dur="18" data-burst="10.4">
+    <div class="bgphoto soft"><img src="img/paisaje-pareja.jpg" alt=""></div>
     <div class="petals">
       <i style="--x:8%;--d:4s;--t:7s;--s:1"></i><i style="--x:22%;--d:5.2s;--t:8s;--s:.8"></i>
       <i style="--x:37%;--d:4.6s;--t:6.5s;--s:1.1"></i><i style="--x:51%;--d:6s;--t:7.5s;--s:.9"></i>
@@ -639,7 +716,7 @@
       <i style="--x:90%;--d:4.9s;--t:6.8s;--s:1.05"></i><i style="--x:15%;--d:7.2s;--t:7.8s;--s:.85"></i>
       <i style="--x:44%;--d:8s;--t:7.2s;--s:.95"></i><i style="--x:70%;--d:7.6s;--t:8.2s;--s:.8"></i>
     </div>
-    <div class="tag">✦ Recuerdo nº 13<b>El más importante</b></div>
+    <div class="tag"><span>✦ Recuerdo nº 13</span><b>El más importante</b></div>
     <div class="date split2">10 · 09 · 2026</div>
     <div class="shrine">
       <img src="img/novios.jpg" alt="">
@@ -676,7 +753,8 @@
 
   <!-- 20 · 13 ABUELOS (primero ella, luego aparezco yo delante) -->
   <section class="scene" data-dur="12.5">
-    <div class="tag">Recuerdo nº 14<b>Spoiler del futuro</b></div>
+    <div class="bgphoto soft"><img src="img/paisaje-mirador.jpg" alt=""></div>
+    <div class="tag"><span>Recuerdo nº 14</span><b>Spoiler del futuro</b></div>
     <div class="gstack">
       <div class="polaroid g1"><img src="img/abuela.jpg" alt=""></div>
       <div class="jaja">Vieja loca</div>
@@ -700,7 +778,7 @@
     <div class="full a"><img src="img/abrazo.jpg" alt=""></div>
     <div class="full b"><img src="img/beso.jpg" alt=""></div>
     <div class="over" style="padding-bottom:calc(env(safe-area-inset-bottom,0px) + 80px)">
-      <div class="tag">Recuerdo nº 15<b>♥</b></div>
+      <div class="tag"><span>Recuerdo nº 15</span><b>♥</b></div>
       <p class="cap">Te quiero mucho, gordinflona.
         <small>Hoy, mañana y en tooodos los atardeceres que nos quedan por ver.</small></p>
     </div>
@@ -757,7 +835,19 @@
   const SONG_VOLUME = 0.30;
 
   const scenes = [...document.querySelectorAll('.scene')];
-  const bar = document.querySelector('#progress i');
+  // barra de progreso: un segmento por escena (sin contar la de inicio)
+  const progress = document.getElementById('progress');
+  progress.innerHTML = scenes.slice(1).map(() => '<b><i></i></b>').join('');
+  const segs = [...progress.children];
+  function paintProgress(n) {
+    segs.forEach((b, i) => { b.classList.remove('now'); b.classList.toggle('done', i + 1 < n); });
+    const cur = segs[n - 1];
+    if (!cur) return;
+    const d = scenes[n].dataset.dur;
+    cur.style.setProperty('--dur', d === 'wait' ? '1.2s' : d + 's');
+    void cur.offsetWidth;   // reinicia el llenado
+    cur.classList.add('now');
+  }
   const song = document.getElementById('song');
   const body = document.body;
   let idx = -1, timer = null, endsAt = 0, remaining = 0;
@@ -784,7 +874,7 @@
     s.classList.remove('active', 'leaving', 'opened');
     void s.offsetWidth; // reinicia animaciones
     s.classList.add('active');
-    bar.style.width = (n / (scenes.length - 1) * 100) + '%';
+    paintProgress(n);
     if (s.dataset.confetti) setTimeout(() => { if (scenes[idx] === s) burst(160); }, 1100);
     if (s.dataset.burst) setTimeout(() => { if (scenes[idx] === s && !paused) burst(200); }, parseFloat(s.dataset.burst) * 1000);
     const d = s.dataset.dur;
@@ -856,6 +946,8 @@
     song.play().catch(() => {});
     try { document.documentElement.requestFullscreen?.().catch(() => {}); } catch (_) {}
     try { navigator.wakeLock?.request('screen').catch(() => {}); } catch (_) {}
+    document.getElementById('bloom').classList.add('on');   // destello de luz al empezar
+    try { navigator.vibrate?.(20); } catch (_) {}
     go(1);
   });
   let userPausedSong = false;
@@ -983,7 +1075,6 @@
   document.getElementById('envelope').addEventListener('click', () => {
     if (gift.classList.contains('opened')) return;
     gift.classList.add('opened');
-    bar.style.width = '100%';
     try { navigator.vibrate?.([30, 60, 30]); } catch (_) {}
     setTimeout(() => burst(220), 1700);
     setTimeout(() => burst(140), 3300);
@@ -1016,6 +1107,24 @@
       v: (Math.random() * .25 + .08) * MOTE_SPEED, w: Math.random() * Math.PI * 2, tw: (Math.random() * .02 + .005) * MOTE_SPEED,
       hue: Math.random() < .5 ? '240,197,133' : (Math.random() < .5 ? '244,169,163' : '248,239,232') };
   }
+  // luces desenfocadas (bokeh) que flotan muy despacio detrás de todo
+  const BOKEH = 7;
+  const bokehSprite = document.createElement('canvas');
+  bokehSprite.width = bokehSprite.height = 128;
+  (() => {
+    const g = bokehSprite.getContext('2d'), rg = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    rg.addColorStop(0, 'rgba(255,255,255,1)'); rg.addColorStop(.55, 'rgba(255,255,255,.55)'); rg.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = rg; g.fillRect(0, 0, 128, 128);
+  })();
+  const tinted = ['240,197,133', '244,169,163', '255,226,190'].map(c => {
+    const t = document.createElement('canvas'); t.width = t.height = 128;
+    const g = t.getContext('2d'); g.drawImage(bokehSprite, 0, 0);
+    g.globalCompositeOperation = 'source-in'; g.fillStyle = `rgb(${c})`; g.fillRect(0, 0, 128, 128);
+    return t;
+  });
+  const orbs = Array.from({ length: BOKEH }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 60 + 40,
+    vx: (Math.random() - .5) * .12, vy: -(Math.random() * .1 + .03), ph: Math.random() * 6, img: tinted[Math.floor(Math.random() * tinted.length)] }));
+
   let pieces = [];
   function burst(n) {
     const colors = ['#f0c585', '#f4a9a3', '#fbf7ef', '#f6d6a8', '#e57f7a'];
@@ -1033,6 +1142,14 @@
   }
   (function loop() {
     sc.clearRect(0, 0, W, H);
+    for (const o of orbs) {
+      o.x += o.vx; o.y += o.vy; o.ph += .006;
+      if (o.y < -o.r) { o.y = H + o.r; o.x = Math.random() * W; }
+      if (o.x < -o.r) o.x = W + o.r; else if (o.x > W + o.r) o.x = -o.r;
+      sc.globalAlpha = .07 + Math.sin(o.ph) * .035;
+      sc.drawImage(o.img, o.x - o.r, o.y - o.r, o.r * 2, o.r * 2);
+    }
+    sc.globalAlpha = 1;
     for (const m of motes) {
       m.y -= m.v; m.w += m.tw; m.x += Math.sin(m.w) * .2 * MOTE_SPEED;
       if (m.y < -10) Object.assign(m, mote(false));
