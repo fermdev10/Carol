@@ -112,6 +112,12 @@
   /* ---------- fotos: comunes ---------- */
   .tag{font:600 11px/1.4 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--gold);opacity:0;margin-bottom:22px;max-width:30em}
   .active .tag{animation:rise 1s ease .2s both}
+  /* título del recuerdo, debajo de "Recuerdo nº X" */
+  .tag b{display:block;margin-top:8px;font:italic 500 clamp(30px,8.6vw,40px)/1.05 var(--serif);letter-spacing:.01em;text-transform:none;
+    background:linear-gradient(100deg,#fff 0%,#ffe2a8 35%,var(--rose) 70%,#fff 100%);background-size:220% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 14px rgba(0,0,0,.55))}
+  .active .tag b{animation:titleIn 1.2s cubic-bezier(.2,.7,.2,1) .6s both, shimmer 6s linear 1.8s infinite}
+  @keyframes titleIn{from{opacity:0;transform:translateY(14px) scale(.96);filter:blur(8px) drop-shadow(0 2px 14px rgba(0,0,0,.55))}to{opacity:1;transform:none;filter:blur(0) drop-shadow(0 2px 14px rgba(0,0,0,.55))}}
   .cap{font-family:var(--hand);font-size:clamp(24px,6.8vw,30px);line-height:1.15;color:var(--ink);max-width:15em;margin-top:24px;opacity:0}
   .active .cap{animation:write 2.2s ease-out 1.9s both}
   @keyframes write{from{opacity:0;clip-path:inset(0 100% 0 0)}10%{opacity:1}to{opacity:1;clip-path:inset(0 0 0 0)}}
@@ -265,6 +271,8 @@
   .bgphoto::after{content:"";position:absolute;inset:0;background:radial-gradient(90% 60% at 50% 48%,rgba(var(--bg-rgb),.62),rgba(var(--bg-rgb),.35) 70%),linear-gradient(180deg,rgba(var(--bg-rgb),.5),transparent 25%,transparent 70%,rgba(var(--bg-rgb),.7))}
   .scene:has(.bgphoto) .l{text-shadow:0 2px 18px rgba(0,0,0,.65)}
   .scene:has(.bgphoto) .l.small{color:rgba(248,239,232,.85)}
+  .bday:has(.bgphoto) .script, .bday:has(.bgphoto) .sub{text-shadow:0 2px 18px rgba(0,0,0,.7)}
+  .bday:has(.bgphoto) .name{filter:drop-shadow(0 4px 22px rgba(0,0,0,.55))}
 
   /* yo asomándome por la derecha */
   .peek{position:absolute;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:min(54vw,260px);transform-origin:100% 100%;opacity:0;visibility:hidden}
@@ -402,6 +410,7 @@
     .l.big{font-size:clamp(32px,9.5vw,46px)}
     .cap{font-size:24px;margin-top:16px}
     .tag{margin-bottom:14px}
+    .tag b{font-size:clamp(26px,7.4vw,32px);margin-top:5px}
     .ticket{padding:20px 18px 18px}.ticket hr{margin:16px -4px 12px}
     .finale{margin-top:16px}
   }
@@ -458,6 +467,7 @@
 
   <!-- 1 -->
   <section class="scene" data-dur="9">
+    <div class="bgphoto"><img src="img/fondo-playa.jpg" alt=""></div>
     <p class="l big">Hoy es un día importante.</p>
     <p class="l">Y no por la comida.</p>
     <p class="l small">(Bueno… un poco por la comida)</p>
@@ -466,6 +476,7 @@
 
   <!-- 2 -->
   <section class="scene" data-dur="8">
+    <div class="bgphoto"><img src="img/fondo-playa2.jpg" alt=""></div>
     <p class="l">Hoy te haces más viejita.</p>
     <p class="l big">Y mira que es difícil,</p>
     <p class="l small">Las arrugas ya llegaron a su límite</p>
@@ -473,6 +484,7 @@
 
   <!-- 3 · FELIZ CUMPLE -->
   <section class="scene bday" data-dur="7.5" data-confetti="1">
+    <div class="bgphoto"><img src="img/fondo-agua.jpg" alt=""></div>
     <div class="script">Feliz cumple</div>
     <div class="name split">Carol</div>
     <div class="sub">Mi lapita ya tiene 21 palosss</div>
@@ -480,6 +492,7 @@
 
   <!-- 4 -->
   <section class="scene" data-dur="6">
+    <div class="bgphoto"><img src="img/fondo-nosotros-playa.jpg" alt=""></div>
     <p class="l">Te dejo aquí algunos de</p>
     <p class="l big gold">Nuestros Recuerdos</p>
   </section>
@@ -488,15 +501,15 @@
   <section class="scene bleed" data-dur="9.5">
     <div class="full dawn"><img src="img/inicio.jpg" alt=""></div>
     <div class="over">
-      <div class="tag">Recuerdo nº 01 · Donde empezó todo</div>
+      <div class="tag">Recuerdo nº 01<b>Donde empezó todo</b></div>
       <p class="cap">Después de taaanto tiempo, la vida decidió juntarnos.
-        <small>Y aquí me di cuenta de que esta es la Carolina con la que quería un futuro juntos</small></p>
+        <small>Y aquí me di cuenta de que esta es la Carolina con la que quería un futuro.</small></p>
     </div>
   </section>
 
   <!-- 02 PERRO (entra deslizando + huellas) -->
   <section class="scene" data-dur="9.5">
-    <div class="tag">Recuerdo nº 02 · Mis niños</div>
+    <div class="tag">Recuerdo nº 02<b>Mis niños</b></div>
     <div class="polaroid tall slide">
       <img src="img/perro.jpg" alt="">
       <div class="paws">
@@ -507,12 +520,12 @@
       </div>
     </div>
     <p class="cap" style="margin-top:44px">Mis dos debilidades en una sola foto.
-      <small>Aún me cuesta distinguir cual es el perro...</small></p>
+      <small>Aún me cuesta distinguir cuál es el perro...</small></p>
   </section>
 
   <!-- 03 ACAMPADA (cremallera de la tienda) -->
   <section class="scene" data-dur="9.5">
-    <div class="tag">Recuerdo nº 03 · De acampada</div>
+    <div class="tag">Recuerdo nº 03<b>De acampada</b></div>
     <div class="zipwrap"><img src="img/acampada.jpg" alt=""><div class="zip"></div></div>
     <p class="cap">Tú probablemente soñando que tienes pollo infinito.
       <small>Yo despierto desde las siete con el cuello tieso. Pero qué mona estás durmiendo.</small></p>
@@ -520,7 +533,7 @@
 
   <!-- 04 SOFÁ (se enciende la tele) -->
   <section class="scene" data-dur="9.5">
-    <div class="tag">Recuerdo nº 04 · Plan perfecto</div>
+    <div class="tag">Recuerdo nº 04<b>Plan perfecto</b></div>
     <div class="tv"><img src="img/sofa.jpg" alt=""></div>
     <p class="cap">Sofá, peli y tú.
       <small>La peli la veo solo porque dices que soy muy cómodo.</small></p>
@@ -528,7 +541,7 @@
 
   <!-- 05 COCHE (polaroid que cae) -->
   <section class="scene" data-dur="9.5">
-    <div class="tag">Recuerdo nº 05 · Fluyendo por Fuerteventura</div>
+    <div class="tag">Recuerdo nº 05<b>Fluyendo por Fuerteventura</b></div>
     <div class="polaroid drop"><img src="img/coche.jpg" alt=""></div>
     <p class="cap">Yo conduciendo sin saber a dónde. Tú disfrutando de las vistas (nada).
       <small>Quiero tenerte de copiloto toooda la vida.</small></p>
@@ -539,15 +552,15 @@
     <div class="full"><img src="img/eclipse.jpg" alt=""></div>
     <div class="moon"></div>
     <div class="over">
-      <div class="tag">Recuerdo nº 06 · 12 de agosto</div>
-      <p class="cap">Un eclipse junto a ti, nada podía ser mejor.
+      <div class="tag">Recuerdo nº 06<b>12 de agosto</b></div>
+      <p class="cap">Un eclipse junto a ti.
         <small>Un momento perfecto para pedirte que fueras mi novia, pero algunas cosas lo impidieron.</small></p>
     </div>
   </section>
 
   <!-- 07 PELUCHE (boing + sello de CULPABLE) -->
   <section class="scene" data-dur="10">
-    <div class="tag">Recuerdo nº 07 · El culpable</div>
+    <div class="tag">Recuerdo nº 07<b>El culpable</b></div>
     <div class="polaroid tall boing">
       <img src="img/peluche.jpg" alt="">
       <div class="guilty">Culpable</div>
@@ -560,7 +573,7 @@
   <section class="scene bleed" data-dur="9.5">
     <div class="full kb"><img src="img/playa.jpg" alt="" style="object-position:78% center"></div>
     <div class="over">
-      <div class="tag">Recuerdo nº 08 · Mi mejor almohada</div>
+      <div class="tag">Recuerdo nº 08<b>Mi mejor almohada</b></div>
       <p class="cap">Esto también cuenta como foto juntos.
         <small>No puedo explicar con palabras la felicidad de acostarme sobre ti.</small></p>
     </div>
@@ -568,14 +581,14 @@
 
   <!-- 12 · 08 SURF (cae y se tambalea) -->
   <section class="scene" data-dur="9.5">
-    <div class="tag">Recuerdo nº 09 · Surfeando</div>
+    <div class="tag">Recuerdo nº 09<b>Surfeando</b></div>
     <div class="polaroid tall wobble"><img src="img/surf.jpg" alt=""></div>
     <p class="cap">El día que no seamos el centro de atención en la playa, me preocuparé.</p>
   </section>
 
   <!-- 13 · 09 ESCALADA (se revela de abajo arriba) -->
   <section class="scene" data-dur="10">
-    <div class="tag">Recuerdo nº 10 · Mi lapita siendo una lapita</div>
+    <div class="tag">Recuerdo nº 10<b>Mi lapita siendo una lapita</b></div>
     <div class="climbwrap">
       <img src="img/escalada.jpg" alt="">
       <div class="holds">
@@ -593,7 +606,7 @@
   <section class="scene bleed" data-dur="10">
     <div class="full wave"><img src="img/atardecer-tabla.jpg" alt=""></div>
     <div class="over">
-      <div class="tag">Recuerdo nº 11 · Tan pancha por la vida</div>
+      <div class="tag">Recuerdo nº 11<b>Tan pancha por la vida</b></div>
       <p class="cap">Ya puede estar acabándose el mundo que tú puedes estar flotando en cualquier playa.
         <small>Por esto te elegí jajasjahs</small></p>
     </div>
@@ -608,7 +621,7 @@
 
   <!-- 16 · 11 IGLESIA (se abren las puertas) -->
   <section class="scene church" data-dur="10.5">
-    <div class="tag">Recuerdo nº 12 · De romería</div>
+    <div class="tag">Recuerdo nº 12<b>De romería</b></div>
     <div class="arch">
       <div class="pic"><img src="img/iglesia.jpg" alt=""></div>
       <div class="door dl"></div><div class="door dr"></div>
@@ -626,7 +639,7 @@
       <i style="--x:90%;--d:4.9s;--t:6.8s;--s:1.05"></i><i style="--x:15%;--d:7.2s;--t:7.8s;--s:.85"></i>
       <i style="--x:44%;--d:8s;--t:7.2s;--s:.95"></i><i style="--x:70%;--d:7.6s;--t:8.2s;--s:.8"></i>
     </div>
-    <div class="tag">✦ Recuerdo nº 13 · El más importante</div>
+    <div class="tag">✦ Recuerdo nº 13<b>El más importante</b></div>
     <div class="date split2">10 · 09 · 2026</div>
     <div class="shrine">
       <img src="img/novios.jpg" alt="">
@@ -663,7 +676,7 @@
 
   <!-- 20 · 13 ABUELOS (primero ella, luego aparezco yo delante) -->
   <section class="scene" data-dur="12.5">
-    <div class="tag">Recuerdo nº 14 · Spoiler del futuro</div>
+    <div class="tag">Recuerdo nº 14<b>Spoiler del futuro</b></div>
     <div class="gstack">
       <div class="polaroid g1"><img src="img/abuela.jpg" alt=""></div>
       <div class="jaja">Vieja loca</div>
@@ -687,7 +700,7 @@
     <div class="full a"><img src="img/abrazo.jpg" alt=""></div>
     <div class="full b"><img src="img/beso.jpg" alt=""></div>
     <div class="over" style="padding-bottom:calc(env(safe-area-inset-bottom,0px) + 80px)">
-      <div class="tag">Recuerdo nº 15 · ♥</div>
+      <div class="tag">Recuerdo nº 15<b>♥</b></div>
       <p class="cap">Te quiero mucho, gordinflona.
         <small>Hoy, mañana y en tooodos los atardeceres que nos quedan por ver.</small></p>
     </div>
