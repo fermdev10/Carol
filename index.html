@@ -104,32 +104,69 @@
   @keyframes fadeOut{from{opacity:1}to{opacity:0}}
   @keyframes breathe{50%{opacity:.4}}
 
-  /* ---------- intro ---------- */
-  .heartwrap{position:relative;width:86px;height:86px;margin-bottom:38px;animation:fadeIn 1.6s ease .2s both}
-  #intro .heart{position:relative;z-index:1;width:100%;height:100%;filter:drop-shadow(0 0 22px rgba(244,169,163,.6));animation:beat 1.6s ease-in-out infinite}
-  @keyframes beat{0%,100%{transform:scale(1)}14%{transform:scale(1.13)}28%{transform:scale(1)}42%{transform:scale(1.08)}56%{transform:scale(1)}}
-  /* ondas que salen del corazón con cada latido */
-  .halo{position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(244,169,163,.55);opacity:0;animation:halo 1.6s cubic-bezier(.2,.6,.3,1) infinite}
-  .halo:nth-child(2){animation-delay:.22s;border-color:rgba(240,197,133,.4)}
-  @keyframes halo{0%{opacity:0;transform:scale(.6)}14%{opacity:.9}100%{opacity:0;transform:scale(2.3)}}
-  #intro h1{font-weight:500;font-style:italic;font-size:clamp(50px,15vw,72px);line-height:1;letter-spacing:-.015em;color:#fff;text-shadow:0 0 50px rgba(244,169,163,.35)}
-  #intro h1 span{display:inline-block;animation:letterIn 1.2s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(.5s + var(--c) * .07s)}
+  /* ---------- intro: su vinilo (como el del llavero), con la paniculata de la rosa prensada ---------- */
+  #intro{gap:0}
+  #intro .greet{font-family:var(--hand);font-size:clamp(34px,9.6vw,42px);line-height:1;color:var(--rose);animation:rise 1.4s ease .3s both}
+  #intro h1{font-weight:500;font-style:italic;font-size:clamp(58px,17vw,80px);line-height:1.05;letter-spacing:-.015em;color:#fff;text-shadow:0 0 50px rgba(244,169,163,.35);margin-top:6px}
+  #intro h1 span{display:inline-block;animation:letterIn 1.2s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(.7s + var(--c) * .07s)}
   @keyframes letterIn{from{opacity:0;transform:translateY(.35em);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
-  #intro h1::after{content:"";display:block;width:64px;height:1px;margin:22px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:lineIn 1.4s cubic-bezier(.2,.7,.2,1) 1.5s both}
   @keyframes lineIn{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:none}}
-  #intro p{font-family:var(--sans);font-size:15px;letter-spacing:.02em;color:var(--muted);margin-top:18px;line-height:1.6;animation:rise 1.4s ease 1.8s both}
-  #start{position:relative;overflow:hidden;margin-top:44px;font:600 13px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--bg);
-    background:linear-gradient(135deg,#ffe9c2,var(--gold) 45%,var(--rose));border:0;border-radius:999px;padding:19px 34px;
-    box-shadow:0 10px 40px -10px rgba(240,197,133,.7),inset 0 1px 0 rgba(255,255,255,.6);animation:rise 1.2s ease 2.3s both, glow 2.6s ease-in-out 3.5s infinite}
-  /* destello que recorre el botón */
-  #start::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:50%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-20deg);animation:sweep 3.2s ease-in-out 3.2s infinite}
-  @keyframes sweep{0%{left:-60%}45%,100%{left:130%}}
-  @keyframes glow{50%{box-shadow:0 10px 50px -4px rgba(244,169,163,.85),inset 0 1px 0 rgba(255,255,255,.6)}}
+
+  .deck{position:relative;width:min(64vw,36vh,270px);aspect-ratio:1;margin:34px 0 22px;padding:0;border:0;background:none;border-radius:50%;cursor:pointer;color:inherit;
+    animation:deckIn 1.8s cubic-bezier(.2,.7,.2,1) 1.4s both}
+  @keyframes deckIn{from{opacity:0;transform:translateY(26px) scale(.88) rotate(-30deg)}to{opacity:1;transform:none}}
+  .deck:focus-visible{outline:1px solid var(--gold);outline-offset:14px}
+  /* onda que invita a tocar */
+  .deck::before{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(244,169,163,.5);opacity:0;animation:ping 2.6s cubic-bezier(.2,.6,.3,1) 3.6s infinite}
+  @keyframes ping{0%{opacity:0;transform:scale(.96)}15%{opacity:.8}100%{opacity:0;transform:scale(1.28)}}
+  .playing .deck::before{animation:none}
+
+  .disc{position:absolute;inset:0;z-index:2;border-radius:50%;
+    background:radial-gradient(circle,transparent 0 49%,rgba(255,255,255,.07) 49.5% 50%,transparent 50.5%),
+      repeating-radial-gradient(circle,#141013 0 1.1px,#211a1f 1.5px 2.6px);
+    box-shadow:0 26px 50px -14px rgba(0,0,0,.85),0 0 70px -10px rgba(244,169,163,.28),inset 0 0 0 1px rgba(255,255,255,.07)}
+  /* reflejo fijo sobre los surcos (no gira con el disco) */
+  .sheen{position:absolute;inset:0;z-index:3;border-radius:50%;pointer-events:none;
+    background:conic-gradient(from 25deg,transparent 0 7%,rgba(255,236,214,.16) 12%,transparent 18% 50%,rgba(255,236,214,.11) 62%,transparent 68%);
+    -webkit-mask:radial-gradient(circle,transparent 0 18%,#000 18.5%);mask:radial-gradient(circle,transparent 0 18%,#000 18.5%)}
+  .label{position:absolute;inset:18%;border-radius:50%;overflow:hidden;
+    background:radial-gradient(circle at 35% 30%,#962a50,#5c1231 72%);box-shadow:inset 0 0 0 1px rgba(240,197,133,.35),inset 0 0 18px rgba(0,0,0,.35)}
+  .label .photo{position:absolute;inset:0;border-radius:50%;background:url(disco.JPEG) 58% 55%/cover;box-shadow:inset 0 0 0 1.5px rgba(240,197,133,.7),inset 0 0 14px rgba(0,0,0,.3)}
+  /* la pegatina del corazón azul del llavero */
+  .sticker{position:absolute;z-index:4;left:16%;top:16%;width:26%;aspect-ratio:1;border-radius:50%;background:#fbf7ef;display:grid;place-items:center;
+    box-shadow:0 3px 8px rgba(0,0,0,.35);transform:rotate(-14deg)}
+  .sticker svg{width:78%;filter:drop-shadow(0 1px 0 rgba(255,255,255,.6))}
+
+  /* brazo del tocadiscos: baja al tocar */
+  .arm{position:absolute;z-index:5;right:-13%;top:-9%;width:40%;pointer-events:none;overflow:visible;
+    transform-origin:78% 11.8%;transform:rotate(-30deg);transition:transform 1.1s cubic-bezier(.5,0,.2,1)}
+  .playing .arm{transform:rotate(0)}
+  .playing .disc{animation:spinUp 1.3s cubic-bezier(.55,0,1,.5) forwards,spin 1.8s linear 1.3s infinite}
+  @keyframes spinUp{to{transform:rotate(320deg)}}
+  @keyframes spin{from{transform:rotate(320deg)}to{transform:rotate(680deg)}}
+
+  /* ramitas de paniculata (como las del cuadro) */
+  .sprig{position:absolute;z-index:1;bottom:-16%;width:50%;overflow:visible;pointer-events:none}
+  .sprig.l{left:-36%;transform:rotate(-14deg)}
+  .sprig.r{right:-34%;transform:scaleX(-1) rotate(-6deg)}
+  .sprig path{fill:none;stroke:rgba(205,196,150,.55);stroke-width:1.1;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 2.4s cubic-bezier(.4,0,.2,1) 1.9s forwards}
+  .sprig circle{fill:#fbf7ef;opacity:0;transform-box:fill-box;transform-origin:center;animation:bud .9s cubic-bezier(.2,.8,.3,1.4) forwards;animation-delay:calc(3.2s + var(--k) * .035s)}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes bud{from{opacity:0;transform:scale(0)}to{opacity:.92;transform:none}}
+
+  #intro .since{font-size:clamp(24px,6.8vw,29px);font-style:italic;line-height:1.35;color:var(--ink);max-width:16em;animation:rise 1.4s ease 2.6s both}
+  #intro .cue{margin-top:14px;font:600 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:rgba(248,239,232,.55);
+    animation:fadeIn 1.2s ease 3.8s both,breathe 2.6s ease-in-out 5s infinite}
+  .playing .cue{color:var(--gold);animation:none}
+  #intro .sign{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);font:500 22px/1 var(--hand);color:rgba(244,169,163,.75);animation:fadeIn 1.6s ease 4.4s both}
+  /* al darle al play, todo lo demás se aparta y queda solo el disco */
+  #intro > :not(.deck){transition:opacity .9s ease,filter .9s ease}
+  .playing > :not(.deck){opacity:.12!important;filter:blur(3px)!important}
+  .playing > .cue{opacity:1!important;filter:none!important}
   /* destello de luz al pulsar "empezar" */
-  #bloom{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 62%,rgba(255,240,220,.95),rgba(244,169,163,.55) 28%,rgba(var(--bg-rgb),0) 62%)}
+  #bloom{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 54%,rgba(255,240,220,.95),rgba(244,169,163,.55) 28%,rgba(var(--bg-rgb),0) 62%)}
   #bloom.on{animation:bloom 1.8s cubic-bezier(.2,.7,.2,1) both}
   @keyframes bloom{0%{opacity:0;transform:scale(.3)}25%{opacity:1}100%{opacity:0;transform:scale(2.6)}}
-  #intro small{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 28px);font:400 12px/1.4 var(--sans);color:rgba(248,239,232,.42);padding:0 30px}
 
   /* ---------- cumpleaños ---------- */
   .bday .script{font-family:var(--hand);font-size:clamp(38px,11vw,52px);color:var(--rose);opacity:0}
@@ -529,10 +566,39 @@
 
   <!-- 0 · INTRO -->
   <section class="scene" id="intro" data-dur="wait">
-    <div class="heartwrap"><i class="halo"></i><i class="halo"></i><svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4a9a3"/><stop offset="1" stop-color="#f0c585"/></linearGradient></defs><path fill="url(#hg)" d="M12 21s-7.5-4.6-10-9.3C.3 8.4 2 4.5 5.6 4.1 8 3.8 9.9 5.2 12 7.4c2.1-2.2 4-3.6 6.4-3.3 3.6.4 5.3 4.3 3.6 7.6C19.5 16.4 12 21 12 21z"/></svg></div>
-    <h1 class="split">Hola, Carol.</h1>
-    <p>Esta web es para ti.</p>
-    <button id="start">Toca aquí ♡</button>
+    <div class="greet">Hola</div>
+    <h1 class="split">Carol</h1>
+
+    <!-- el disco: nuestra canción, con nuestra foto en el centro (como el llavero del baifo) -->
+    <button class="deck" id="start" aria-label="Darle al play a nuestra canción">
+      <svg class="sprig l" viewBox="0 0 120 200" aria-hidden="true">
+        <path pathLength="1" d="M62 200C60 160 52 118 42 62"/><path pathLength="1" d="M58 160C72 138 86 120 98 96"/>
+        <path pathLength="1" d="M54 124C40 108 26 96 14 74"/><path pathLength="1" d="M49 96C62 76 72 58 80 36"/>
+        <path pathLength="1" d="M45 78C37 60 31 44 28 22"/><path pathLength="1" d="M60 180C44 170 32 160 22 144"/>
+      </svg>
+      <svg class="sprig r" viewBox="0 0 120 200" aria-hidden="true">
+        <path pathLength="1" d="M62 200C60 160 52 118 42 62"/><path pathLength="1" d="M58 160C72 138 86 120 98 96"/>
+        <path pathLength="1" d="M54 124C40 108 26 96 14 74"/><path pathLength="1" d="M49 96C62 76 72 58 80 36"/>
+        <path pathLength="1" d="M45 78C37 60 31 44 28 22"/><path pathLength="1" d="M60 180C44 170 32 160 22 144"/>
+      </svg>
+      <span class="disc">
+        <span class="label">
+          <span class="photo"></span>
+        </span>
+        <span class="sticker"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#8fb3e6" d="M12 21s-7.5-4.6-10-9.3C.3 8.4 2 4.5 5.6 4.1 8 3.8 9.9 5.2 12 7.4c2.1-2.2 4-3.6 6.4-3.3 3.6.4 5.3 4.3 3.6 7.6C19.5 16.4 12 21 12 21z"/></svg></span>
+      </span>
+      <span class="sheen"></span>
+      <svg class="arm" viewBox="0 0 100 170" aria-hidden="true">
+        <path d="M78 20L76 72Q74 104 44 132" fill="none" stroke="#e9d6b4" stroke-width="3.4" stroke-linecap="round"/>
+        <rect x="32" y="127" width="17" height="11" rx="2" fill="#f0c585" transform="rotate(38 40 132)"/>
+        <circle cx="78" cy="20" r="13" fill="#2b1d25" stroke="rgba(240,197,133,.65)" stroke-width="1.5"/>
+        <circle cx="78" cy="20" r="5" fill="#f0c585"/>
+      </svg>
+    </button>
+
+    <p class="since">Esta web es para ti.</p>
+    <p class="cue" id="cue">toca el disco</p>
+    <small class="sign">con cariño, Fer</small>
   </section>
 
   <!-- 1 -->
@@ -938,17 +1004,38 @@
     if (b && song.paused && !body.classList.contains('started')) song.src = URL.createObjectURL(b);
   }).catch(() => {});
 
-  // ---- inicio ----
+  // ---- pantalla de inicio ----
+  const intro = document.getElementById('intro');
+  // florecitas de la paniculata al final de cada ramita
+  const CLUSTERS = [[42, 62], [98, 96], [14, 74], [80, 36], [28, 22], [22, 144], [70, 132], [36, 104]];
+  document.querySelectorAll('.sprig').forEach((svg, s) => {
+    let k = 0, seed = 7 + s * 13;
+    const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;   // siempre igual, pero irregular
+    svg.insertAdjacentHTML('beforeend', CLUSTERS.map(([x, y]) =>
+      Array.from({ length: 7 }, (_, i) => {
+        const a = rnd() * Math.PI * 2, d = i ? 2.5 + rnd() * 4.5 : 0;
+        return `<circle cx="${(x + Math.cos(a) * d).toFixed(1)}" cy="${(y + Math.sin(a) * d).toFixed(1)}" r="${(i ? 1.3 + rnd() * 1.1 : 2.4).toFixed(1)}" style="--k:${k++}"/>`;
+      }).join('')).join(''));
+  });
+
+  // ---- inicio: al tocar el disco baja la aguja, gira y empieza la canción ----
+  let starting = false;
   document.getElementById('start').addEventListener('click', () => {
-    body.classList.add('started');
+    if (starting) return;
+    starting = true;
     try { song.currentTime = SONG_START; } catch (_) {}
     song.volume = SONG_VOLUME;   // a volumen normal desde el primer instante
     song.play().catch(() => {});
     try { document.documentElement.requestFullscreen?.().catch(() => {}); } catch (_) {}
     try { navigator.wakeLock?.request('screen').catch(() => {}); } catch (_) {}
-    document.getElementById('bloom').classList.add('on');   // destello de luz al empezar
     try { navigator.vibrate?.(20); } catch (_) {}
-    go(1);
+    intro.classList.add('playing');
+    document.getElementById('cue').textContent = '♪ sonando nuestra canción';
+    setTimeout(() => {
+      body.classList.add('started');
+      document.getElementById('bloom').classList.add('on');   // destello de luz al empezar
+      go(1);
+    }, 1700);
   });
   let userPausedSong = false;
   document.addEventListener('visibilitychange', () => {
