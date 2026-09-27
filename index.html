@@ -465,13 +465,84 @@
   .finale p span{color:var(--rose)}
   #replay{pointer-events:auto;margin-top:14px;background:none;border:1px solid rgba(248,239,232,.28);color:var(--muted);font:500 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;padding:11px 18px;border-radius:999px}
 
-  /* ---------- botón "letra" (sustituye al de silenciar) ---------- */
-  #lyricsBtn{position:fixed;z-index:30;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);height:38px;padding:0 15px 0 12px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
-    background:rgba(var(--bg-rgb),.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--ink);font:500 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;
-    display:flex;align-items:center;gap:7px;opacity:0;pointer-events:none;transition:opacity 1s}
-  #lyricsBtn b{font-size:15px;color:var(--gold);animation:note 2.4s ease-in-out infinite}
-  @keyframes note{50%{transform:translateY(-2px) rotate(-8deg)}}
-  body.started #lyricsBtn{opacity:.88;pointer-events:auto}
+  /* ---------- botón "+" con las funciones (letra, recuerdos, tarro, sonido, escríbeme) ---------- */
+  #fab{position:fixed;z-index:33;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:42px;height:42px;border-radius:50%;padding:0;
+    border:1px solid rgba(240,197,133,.45);background:rgba(var(--bg-rgb),.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--gold);
+    display:grid;place-items:center;box-shadow:0 8px 26px -8px rgba(0,0,0,.7),0 0 18px -4px rgba(240,197,133,.35);
+    opacity:0;pointer-events:none;transition:opacity 1s,background .35s,color .35s}
+  #fab svg{width:22px;height:22px;transition:transform .5s cubic-bezier(.3,1.4,.5,1)}
+  body.started #fab{opacity:.92;pointer-events:auto}
+  body.menu #fab{opacity:1;color:var(--bg);background:linear-gradient(135deg,#ffe9c2,var(--gold) 45%,var(--rose))}
+  body.menu #fab svg{transform:rotate(135deg)}
+  /* un par de ondas al principio para que se note que está ahí, y luego se queda quieto */
+  #fab::after{content:"";position:absolute;inset:-1px;border-radius:50%;border:1px solid rgba(240,197,133,.7);opacity:0;pointer-events:none}
+  body.started #fab::after{animation:ping 3s cubic-bezier(.2,.6,.3,1) 3s 3}
+  #menuShade{position:fixed;inset:0;z-index:31;opacity:0;pointer-events:none;transition:opacity .4s;
+    background:radial-gradient(130% 90% at 100% 100%,rgba(var(--bg-rgb),.9),rgba(var(--bg-rgb),.5));backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  body.menu #menuShade{opacity:1;pointer-events:auto}
+  #menu{position:fixed;z-index:32;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 68px);display:flex;flex-direction:column;align-items:flex-end;gap:11px;pointer-events:none}
+  body.menu #menu{pointer-events:auto}
+  #menu button{display:flex;align-items:center;gap:11px;padding:0;border:0;background:none;color:var(--ink);font:500 13px/1 var(--sans);letter-spacing:.04em;
+    opacity:0;transform:translateY(16px) scale(.9);transition:opacity .2s ease,transform .25s ease}
+  body.menu #menu button{opacity:1;transform:none;transition:opacity .4s ease,transform .55s cubic-bezier(.3,1.4,.5,1);transition-delay:calc((4 - var(--n)) * 50ms)}
+  #menu button span{padding:9px 13px;border-radius:999px;background:rgba(var(--bg-rgb),.72);border:1px solid rgba(255,255,255,.1);white-space:nowrap}
+  #menu button i{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--gold);
+    background:rgba(251,247,239,.09);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .2s}
+  #menu button:active i{transform:scale(.9)}
+  #menu svg,.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  #mSound.off i{color:var(--muted)}
+
+  /* ---------- paneles que suben desde abajo ---------- */
+  #sheetShade{position:fixed;inset:0;z-index:49;background:rgba(8,2,6,.6);opacity:0;pointer-events:none;transition:opacity .35s}
+  body.sheet-open #sheetShade{opacity:1;pointer-events:auto}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;max-width:520px;max-height:88dvh;margin:0 auto;display:flex;flex-direction:column;
+    padding:10px 18px calc(env(safe-area-inset-bottom,0px) + 22px);border-radius:26px 26px 0 0;border-top:1px solid rgba(240,197,133,.3);
+    background:linear-gradient(180deg,#3a1629,var(--bg) 60%);box-shadow:0 -20px 60px rgba(0,0,0,.6);animation:shIn .5s cubic-bezier(.2,.8,.2,1)}
+  .sheet[hidden]{display:none}
+  .sheet.closing{animation:shOut .32s ease forwards}
+  @keyframes shIn{from{transform:translateY(100%)}to{transform:none}}
+  @keyframes shOut{to{transform:translateY(100%)}}
+  .sheet::before{content:"";display:block;flex:none;width:40px;height:4px;border-radius:4px;background:rgba(255,255,255,.22);margin:0 auto 14px}
+  .sh-head{position:relative;flex:none;text-align:center;margin-bottom:18px;padding:0 44px}
+  .sh-head .ly-close{top:-8px;right:-6px}
+  .sh-title{font-family:var(--serif);font-style:italic;font-weight:500;font-size:clamp(30px,8.4vw,38px);line-height:1.02;color:#fff;margin-top:8px}
+  .sh-hint{flex:none;text-align:center;font:400 12px/1.5 var(--sans);color:rgba(248,239,232,.5);margin-top:12px}
+  .sh-link{flex:none;align-self:center;margin-top:16px;background:none;border:1px solid rgba(248,239,232,.28);color:var(--muted);font:500 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;padding:11px 18px;border-radius:999px}
+
+  /* álbum: salta a cualquier recuerdo */
+  .album{overflow-y:auto;overscroll-behavior:contain;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:14px 10px;padding:4px 2px 6px}
+  .album button{position:relative;min-width:0;padding:0;border:0;background:none;text-align:left;color:var(--ink);animation:rise .55s ease backwards;animation-delay:calc(.1s + var(--k) * 35ms)}
+  .album img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;box-shadow:0 8px 18px -10px rgba(0,0,0,.9)}
+  .album b{position:absolute;left:6px;top:6px;font:700 10px/1 var(--sans);letter-spacing:.08em;padding:4px 6px;border-radius:999px;background:rgba(var(--bg-rgb),.7);color:var(--gold)}
+  .album span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;min-height:2.5em;font:500 11.5px/1.25 var(--sans);color:var(--muted);margin-top:6px}
+  .album .cur img{outline:2px solid var(--gold);outline-offset:2px}
+  .album .cur span{color:var(--gold)}
+
+  /* tarro de papelitos */
+  .jarwrap{display:flex;flex-direction:column;align-items:center;gap:18px;padding:2px 0 4px}
+  .jarwrap .note{min-height:96px;width:100%;max-width:20em;display:grid;place-items:center;text-align:center;padding:10px 14px;border-radius:12px;
+    font:500 clamp(25px,7vw,30px)/1.15 var(--hand);color:#5a2238;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .32 0 0 0 0 .18 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .32 0 0 0 0 .18 0 0 0 .2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),radial-gradient(ellipse at 50% 45%,transparent 50%,rgba(160,115,60,.22) 100%),linear-gradient(170deg,#fffaf0,#f4e8d2);border:4px solid var(--edge,transparent);transform:rotate(-1.5deg);box-shadow:0 16px 30px -14px rgba(0,0,0,.8)}
+  .jarwrap .note.empty{background:none;border-color:transparent;box-shadow:none;color:var(--muted);transform:none}
+  .jarwrap .note.pop{animation:unfold .6s cubic-bezier(.3,1.4,.5,1)}
+  @keyframes unfold{from{opacity:0;transform:translateY(60px) scale(.5) rotate(10deg)}to{opacity:1;transform:rotate(-1.5deg)}}
+  .jar{position:relative;width:118px;height:146px;padding:0;border:0;background:none;cursor:pointer}
+  .jar .lid{position:absolute;left:24px;right:24px;top:0;height:16px;border-radius:5px;background:linear-gradient(180deg,#ffe0a8,var(--gold) 60%,#c99a58);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+  .jar .glass{position:absolute;left:6px;right:6px;top:13px;bottom:0;overflow:hidden;border-radius:26px 26px 32px 32px;border:2px solid rgba(255,255,255,.32);
+    background:linear-gradient(90deg,rgba(255,255,255,.14),rgba(255,255,255,.03) 38%,rgba(255,255,255,.1))}
+  .jar .glass i{position:absolute;left:var(--x);bottom:var(--y);width:22px;height:12px;border-radius:3px;background:linear-gradient(90deg,transparent 47%,rgba(0,0,0,.14) 50%,transparent 53%),var(--c);transform:rotate(var(--r));box-shadow:0 1px 2px rgba(0,0,0,.35);transition:transform .55s cubic-bezier(.3,1,.5,1),opacity .45s}
+  .jar .glass i.out{opacity:0;transform:translateY(-110px) rotate(0) scale(.7)}
+  .jar.shake{animation:shake .5s ease}
+  @keyframes shake{20%{transform:rotate(-7deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(2deg)}}
+  .jar-count{font:600 10.5px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+
+  /* escríbeme */
+  .msg textarea{flex:none;width:100%;min-height:140px;resize:none;border-radius:16px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);
+    color:var(--ink);font:500 23px/1.25 var(--hand);padding:14px 16px;outline:none;user-select:text;-webkit-user-select:text}
+  .msg textarea::placeholder{color:rgba(248,239,232,.38)}
+  .msg textarea:focus{border-color:rgba(240,197,133,.6)}
+  .msg .send{flex:none;margin-top:14px;height:50px;border:0;border-radius:999px;font:600 12.5px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--bg);
+    background:linear-gradient(135deg,#ffe9c2,var(--gold) 45%,var(--rose));box-shadow:0 10px 30px -12px rgba(240,197,133,.7);transition:opacity .3s}
+  .msg .send:disabled{opacity:.35}
 
   /* ---------- pantalla de la letra ---------- */
   #lyrics{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:var(--bg);animation:lyIn .55s cubic-bezier(.2,.8,.2,1)}
@@ -527,7 +598,41 @@
 <canvas id="sky"></canvas>
 <canvas id="confetti"></canvas>
 <div id="progress"><i></i></div>
-<button id="lyricsBtn" aria-label="Ver la letra de la canción"><b>♪</b>letra</button>
+
+<!-- Botón "+": abre las funciones sin cortar la experiencia (se pausa mientras están abiertas) -->
+<div id="menuShade"></div>
+<nav id="menu" aria-label="Más cosas">
+  <button data-open="msg" style="--n:0"><span>Escríbeme</span><i><svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-11 6.6L4 19.5l1.4-4.4A7.5 7.5 0 1 1 20 11.5z"/></svg></i></button>
+  <button id="mSound" style="--n:1"><span>Silenciar</span><i><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="waves" d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></i></button>
+  <button data-open="jar" style="--n:2"><span>Cosas que me encantan de ti</span><i><svg viewBox="0 0 24 24"><path d="M8 3h8M9 3v3.2C6.5 7.3 5 9.5 5 12.5V18a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-5.5c0-3-1.5-5.2-4-6.3V3"/><path d="M12 17.2s-2.6-1.6-2.6-3.3a1.4 1.4 0 0 1 2.6-.7 1.4 1.4 0 0 1 2.6.7c0 1.7-2.6 3.3-2.6 3.3z"/></svg></i></button>
+  <button data-open="album" style="--n:3"><span>Nuestros recuerdos</span><i><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg></i></button>
+  <button data-open="lyrics" style="--n:4"><span>Letra de la canción</span><i><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></i></button>
+</nav>
+<button id="fab" aria-label="Más cosas" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24" style="stroke-width:2"><path d="M12 5v14M5 12h14"/></svg></button>
+
+<div id="sheetShade"></div>
+<section class="sheet" id="sh-album" hidden role="dialog" aria-label="Nuestros recuerdos">
+  <div class="sh-head"><button class="ly-close" data-close aria-label="Cerrar">×</button>
+    <div class="ly-kicker">Salta a cualquiera</div><div class="sh-title">Nuestros recuerdos</div></div>
+  <div class="album" id="album"></div>
+  <button class="sh-link" id="fromStart">↺ Ver desde el principio</button>
+</section>
+<section class="sheet" id="sh-jar" hidden role="dialog" aria-label="Cosas que me encantan de ti">
+  <div class="sh-head"><button class="ly-close" data-close aria-label="Cerrar">×</button>
+    <div class="ly-kicker">Saca un papelito</div><div class="sh-title">Cosas que me encantan de ti</div></div>
+  <div class="jarwrap">
+    <div class="note empty" id="note">Toca el tarro ♡</div>
+    <button class="jar" id="jar" aria-label="Sacar un papelito"><i class="lid"></i><i class="glass" id="papers"></i></button>
+    <div class="jar-count" id="jarCount"></div>
+  </div>
+</section>
+<section class="sheet msg" id="sh-msg" hidden role="dialog" aria-label="Escríbeme">
+  <div class="sh-head"><button class="ly-close" data-close aria-label="Cerrar">×</button>
+    <div class="ly-kicker">Para Fer</div><div class="sh-title">Escríbeme algo</div></div>
+  <textarea id="msgText" maxlength="1500" placeholder="Lo que has sentido, lo que te ha hecho gracia, lo que quieras…"></textarea>
+  <button class="send" id="msgSend" disabled>Enviar</button>
+  <p class="sh-hint">Se abrirá WhatsApp con tu mensaje listo para mandármelo.</p>
+</section>
 
 <!-- Pantalla de la letra (la letra y la traducción se rellenan en LETRA, en el código de abajo) -->
 <div id="lyrics" hidden role="dialog" aria-label="Letra de la canción">
@@ -947,6 +1052,11 @@
     if (d !== 'wait') schedule(parseFloat(d) * 1000);
   }
 
+  // pausa mientras hay algo abierto encima (letra, menú, paneles) y sigue al cerrarlo
+  let pausedByUI = false;
+  const uiPause = () => { if (!pausedByUI) pausedByUI = pauseExp(); };
+  const uiResume = () => { if (pausedByUI) { pausedByUI = false; resumeExp(); } };
+
   function pauseExp() {
     if (paused || idx <= 0 || scenes[idx].dataset.dur === 'wait') return false;
     paused = true; remaining = Math.max(400, endsAt - Date.now());
@@ -994,7 +1104,10 @@
   stage.addEventListener('pointercancel', () => { clearTimeout(holdT); downAt = 0; resumeExp(); });
   stage.addEventListener('contextmenu', e => e.preventDefault());
   addEventListener('keydown', e => {
+    if (e.target.closest?.('textarea,input')) return;   // escribiendo un mensaje
     if (!lyrics.hidden) { if (e.key === 'Escape') closeLyrics(); return; }
+    if (openSheet) { if (e.key === 'Escape') hideSheet(); return; }
+    if (body.classList.contains('menu')) { if (e.key === 'Escape') closeMenu(); return; }
     if (idx > 0) { if (e.key === 'ArrowRight' || e.key === ' ') next(); if (e.key === 'ArrowLeft') back(); }
   });
 
@@ -1128,7 +1241,7 @@
     syncPlayBtn();
   });
 
-  let lyRaf = 0, lastUserScroll = 0, nowLine = null, pausedForLyrics = false;
+  let lyRaf = 0, lastUserScroll = 0, nowLine = null;
   lyList.addEventListener('touchmove', () => lastUserScroll = Date.now(), { passive: true });
   lyList.addEventListener('wheel', () => lastUserScroll = Date.now(), { passive: true });
   function karaoke() {
@@ -1142,7 +1255,7 @@
     lyRaf = requestAnimationFrame(karaoke);
   }
   function openLyrics() {
-    pausedForLyrics = pauseExp();
+    uiPause();
     lyrics.hidden = false; lyrics.classList.remove('closing');
     syncPlayBtn();
     nowLine?.classList.remove('now'); nowLine = null; lastUserScroll = 0;   // al abrir, centra la frase que suena
@@ -1152,10 +1265,157 @@
     lyrics.classList.add('closing');
     cancelAnimationFrame(lyRaf);
     setTimeout(() => { lyrics.hidden = true; lyrics.classList.remove('closing'); }, 330);
-    if (pausedForLyrics) { resumeExp(); pausedForLyrics = false; }
+    uiResume();
   }
-  document.getElementById('lyricsBtn').addEventListener('click', openLyrics);
   document.getElementById('lyClose').addEventListener('click', closeLyrics);
+
+  // =====================================================================
+  //  BOTÓN "+" Y SUS FUNCIONES
+  // =====================================================================
+  //  TARRO: una frase por papelito. Añade, quita o cambia las que quieras.
+  const RAZONES = [
+    'Lo guapa que estás recién levantada.',
+    'Tus ganas de viajar y descubrir el mundo.',
+    'Lo cariñosa que eres antes de dormir.',
+    'Cómo me entiendes incluso cuando no sé explicar lo que me pasa.',
+    'Imaginar todo lo que todavía nos queda por vivir.',
+    'Lo guapos y despistados que van a ser nuestros hijos.',
+    'Que me dejes usarte de almohada.',
+    'Que un mensaje tuyo pueda cambiarme el humor.',
+    'Que me sienta en casa cuando estoy contigo.',
+    'Lo j*didamente guapa que ereeees.',
+    'Que saques tu verdadero yo y me hagas reir.',
+    'Que te hagas la enfadada cuando te molesto.',
+    'Que podamos reírnos de cualquier tontería.',
+    'Tu sonrisa. No hay nada más perfecto en esta vida.',
+    'Descubrir cosas nuevas de ti.',
+    'Que progresemos juntos en la vida',
+    'Tus abrazos, que mejoran siempre mi día.',
+    'Cuando no puedes parar de reir y pierdes la fuerza.',
+    'Que me cuides incluso cuando no te lo pido.',
+    'Que me hagas querer ser mejor cada día.',
+    'Que seas mi persona favorita y poder contárselo todo.',
+    'Lo fácil que es quererte.',
+    'Que me aguantes cuando ni yo me aguanto.',
+    'Cómo se te ilumina la cara cuando algo te hace ilusión.',
+    'Que tengas detalles miínimos conmigo y me hagan sentir especial.',
+    'Poder presumirte y que me presumas.',
+    'Verte disfrutar con cualquier dulce o comida.',
+    'Que me veas jugar a futbol',
+    'Lo bien que te queda cualquier cosa que te pones'
+  ];
+  const WHATSAPP = '34689237681';
+
+  const $ = id => document.getElementById(id);
+  const fab = $('fab');
+  function openMenu() { body.classList.add('menu'); fab.setAttribute('aria-expanded', 'true'); uiPause(); }
+  function closeMenu(keepPaused) {
+    body.classList.remove('menu'); fab.setAttribute('aria-expanded', 'false');
+    if (!keepPaused) uiResume();
+  }
+  fab.addEventListener('click', () => body.classList.contains('menu') ? closeMenu() : openMenu());
+  $('menuShade').addEventListener('click', () => closeMenu());
+
+  let openSheet = null;
+  function showSheet(name) {
+    const sh = $('sh-' + name);
+    if (name === 'album') paintAlbum();
+    openSheet = sh; sh.hidden = false; sh.classList.remove('closing');
+    body.classList.add('sheet-open'); uiPause();
+  }
+  function hideSheet(then) {
+    if (!openSheet) return;
+    const sh = openSheet; openSheet = null;
+    sh.classList.add('closing'); body.classList.remove('sheet-open');
+    setTimeout(() => { sh.hidden = true; sh.classList.remove('closing'); }, 320);
+    if (then) { pausedByUI = false; then(); } else uiResume();
+  }
+  document.querySelectorAll('#menu [data-open]').forEach(b => b.addEventListener('click', () => {
+    closeMenu(true);
+    b.dataset.open === 'lyrics' ? openLyrics() : showSheet(b.dataset.open);
+  }));
+  document.querySelectorAll('.sheet [data-close]').forEach(b => b.addEventListener('click', () => hideSheet()));
+  $('sheetShade').addEventListener('click', () => hideSheet());
+
+  // ---- nuestros recuerdos: miniaturas de cada recuerdo para saltar a él (el regalo no, que es sorpresa) ----
+  const album = $('album');
+  const memories = scenes.map((s, n) => ({ s, n })).filter(({ s }) => s.querySelector('.tag') && !s.classList.contains('gift'));
+  album.innerHTML = memories.map(({ s, n }, k) => {
+    const img = [...s.querySelectorAll('img')].find(i => !i.closest('.bgphoto')) || s.querySelector('img');
+    const num = (s.querySelector('.tag span').textContent.match(/\d+/) || [''])[0];
+    return `<button data-n="${n}" style="--k:${k}"><img src="${img.getAttribute('src')}" alt="" loading="lazy"><b>${num}</b><span>${esc(s.querySelector('.tag b').textContent)}</span></button>`;
+  }).join('');
+  function paintAlbum() {
+    let cur = null;
+    for (const b of album.children) { b.classList.remove('cur'); if (+b.dataset.n <= idx) cur = b; }
+    cur?.classList.add('cur');
+    [...album.children].forEach(b => { b.style.animation = 'none'; void b.offsetWidth; b.style.animation = ''; });
+  }
+  album.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (b) hideSheet(() => go(+b.dataset.n));
+  });
+  $('fromStart').addEventListener('click', () => hideSheet(() => {
+    try { song.currentTime = SONG_START; } catch (_) {}
+    go(1);
+  }));
+
+  // ---- tarro: cada toque saca un papelito al azar, sin repetir hasta vaciarlo ----
+  const papers = $('papers'), note = $('note'), jar = $('jar'), jarCount = $('jarCount');
+  // colores de los papelitos (pasteles a juego con la web; el azul es el del corazón del disco)
+  const PAPER = ['#f4a9a3', '#f0c585', '#fbf7ef', '#e8b7c8', '#8fb3e6', '#a8d8c0', '#f7c9a4', '#c9b6ec', '#fff0a8', '#f28f8f'];
+  let bag = [];
+  function fillJar() {
+    bag = RAZONES.slice().sort(() => Math.random() - .5);
+    papers.innerHTML = bag.map((_, i) =>
+      `<i style="--x:${8 + (i % 4) * 20 + Math.random() * 6}%;--y:${6 + Math.floor(i / 4) * 12 + Math.random() * 4}px;--r:${Math.round(Math.random() * 60 - 30)}deg;--c:${PAPER[(i * 3) % PAPER.length]}"></i>`).join('');
+    jarCount.textContent = `${bag.length} papelitos`;
+  }
+  fillJar();
+  jar.addEventListener('click', () => {
+    if (!bag.length) {
+      fillJar();
+      note.className = 'note empty'; note.textContent = 'Tarro lleno otra vez ♡';
+      return;
+    }
+    jar.classList.remove('shake'); void jar.offsetWidth; jar.classList.add('shake');
+    const left = [...papers.children].filter(p => !p.classList.contains('out'));
+    const paper = left[left.length - 1];
+    paper?.classList.add('out');
+    const text = bag.pop();
+    try { navigator.vibrate?.(12); } catch (_) {}
+    setTimeout(() => {
+      note.className = 'note'; void note.offsetWidth; note.classList.add('pop');
+      note.textContent = text;
+      const c = paper?.style.getPropertyValue('--c') || 'transparent';
+      note.style.setProperty('--edge', c === '#fbf7ef' ? '#dccdb4' : c);   // borde del color del papelito (el crema, un poco más oscuro para que se vea)
+      jarCount.textContent = bag.length ? `quedan ${bag.length}` : 'toca para rellenarlo';
+    }, 260);
+  });
+
+  // ---- sonido ----
+  const mSound = $('mSound');
+  mSound.addEventListener('click', () => {
+    song.muted = !song.muted;
+    if (!song.muted && song.paused && !userPausedSong) song.play().catch(() => {});
+    mSound.classList.toggle('off', song.muted);
+    mSound.querySelector('span').textContent = song.muted ? 'Activar sonido' : 'Silenciar';
+    mSound.querySelector('.waves').setAttribute('d', song.muted ? 'M16 9.5l5 5M21 9.5l-5 5' : 'M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11');
+  });
+
+  // ---- escríbeme: el borrador se guarda en su móvil hasta que lo mande ----
+  const msgText = $('msgText'), msgSend = $('msgSend');
+  try { msgText.value = localStorage.getItem('carol-msg') || ''; } catch (_) {}
+  const syncMsg = () => { msgSend.disabled = !msgText.value.trim(); };
+  syncMsg();
+  msgText.addEventListener('input', () => {
+    syncMsg();
+    try { localStorage.setItem('carol-msg', msgText.value); } catch (_) {}
+  });
+  msgSend.addEventListener('click', () => {
+    const text = msgText.value.trim();
+    if (text) window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`, '_blank');
+  });
 
   // ---- regalo ----
   const gift = document.querySelector('.gift');
