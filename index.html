@@ -1317,20 +1317,41 @@
     'Que podamos reírnos de cualquier tontería.',
     'Tu sonrisa. No hay nada más perfecto en esta vida.',
     'Descubrir cosas nuevas de ti.',
-    'Que progresemos juntos en la vida',
+    'Que progresemos juntos en la vida.',
     'Tus abrazos, que mejoran siempre mi día.',
     'Cuando no puedes parar de reir y pierdes la fuerza.',
     'Que me cuides incluso cuando no te lo pido.',
     'Que me hagas querer ser mejor cada día.',
-    'Que seas mi persona favorita y poder contárselo todo.',
+    'Que seas mi persona favorita y poder contártelo todo.',
     'Lo fácil que es quererte.',
     'Que me aguantes cuando ni yo me aguanto.',
     'Cómo se te ilumina la cara cuando algo te hace ilusión.',
-    'Que tengas detalles miínimos conmigo y me hagan sentir especial.',
+    'Que tengas detalles mínimos conmigo y me hagan sentir especial.',
     'Poder presumirte y que me presumas.',
     'Verte disfrutar con cualquier dulce o comida.',
-    'Que me veas jugar a futbol',
-    'Lo bien que te queda cualquier cosa que te pones'
+    'Que me veas jugar a fútbol.',
+    'Lo bien que te queda cualquier cosa que te pones.',
+    'Tu risa, que se me pega aunque no sepa de qué te ríes.',
+    'Verte escalar con esa técnica de profesional.',
+    'Tú en modo lapita.',
+    'Lo mona que vas vestida de romera.',
+    'Que me cojas el brazo sin darme cuenta.',
+    'Lo mal que bailasss y cantaaas.',
+    'Lo mona que te ves aprendiendo inglés.',
+    'Que me hagas sentir orgulloso de ti cada día.',
+    'Que te acuerdes de detalles que yo ya había olvidado.',
+    'Que tengas paciencia conmigo cuando me pongo pesado.',
+    'Lo preciosa que estás sin maquillaje.',
+    'Tus sustos viendo películas de miedo.',
+    'Despertarme de noche porque has venido a abrazarme.',
+    'Que te preocupes por mi y siempre quieras cuidarme.',
+    'Que digas "no tengo hambre" pero no te lo piensas si te ofrezco comida.',
+    'Tu "5 minutitos más" que siempre acaban siendo media hora para despertarnos.',
+    'Que te rías de tus propios chistes que son horribles.',
+    'Que me pidas mi opinión cuando eliges algo.',
+    'Ole mi maridooo, ole ole y oleee. Y yo, ME LA GOZOOOO.',
+    'Que me mires con cara de pena para que haga lo que quieres.',
+    '😉...'
   ];
   const WHATSAPP = '34689237681';
 
@@ -1411,8 +1432,10 @@
   let bag = [];
   function fillJar() {
     bag = RAZONES.slice().sort(() => Math.random() - .5);
+    // 6 por fila y filas más juntas cuantos más papelitos haya, para que todos quepan en el cristal
+    const step = Math.min(12, 105 / Math.ceil(bag.length / 6));
     papers.innerHTML = bag.map((_, i) =>
-      `<i style="--x:${8 + (i % 4) * 20 + Math.random() * 6}%;--y:${6 + Math.floor(i / 4) * 12 + Math.random() * 4}px;--r:${Math.round(Math.random() * 60 - 30)}deg;--c:${PAPER[(i * 3) % PAPER.length]}"></i>`).join('');
+      `<i style="--x:${4 + (i % 6) * 13.5 + Math.random() * 5}%;--y:${6 + Math.floor(i / 6) * step + Math.random() * 3}px;--r:${Math.round(Math.random() * 60 - 30)}deg;--c:${PAPER[(i * 3) % PAPER.length]}"></i>`).join('');
     jarCount.textContent = `${bag.length} papelitos`;
   }
   fillJar();
