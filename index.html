@@ -465,7 +465,7 @@
   .finale p span{color:var(--rose)}
   #replay{pointer-events:auto;margin-top:14px;background:none;border:1px solid rgba(248,239,232,.28);color:var(--muted);font:500 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;padding:11px 18px;border-radius:999px}
 
-  /* ---------- botón "+" con las funciones (letra, recuerdos, tarro, sonido, escríbeme) ---------- */
+  /* ---------- botón "+" con las funciones (días juntos, letra, recuerdos, tarro, sonido, escríbeme) ---------- */
   #fab{position:fixed;z-index:33;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:42px;height:42px;border-radius:50%;padding:0;
     border:1px solid rgba(240,197,133,.45);background:rgba(var(--bg-rgb),.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--gold);
     display:grid;place-items:center;box-shadow:0 8px 26px -8px rgba(0,0,0,.7),0 0 18px -4px rgba(240,197,133,.35);
@@ -484,7 +484,7 @@
   body.menu #menu{pointer-events:auto}
   #menu button{display:flex;align-items:center;gap:11px;padding:0;border:0;background:none;color:var(--ink);font:500 13px/1 var(--sans);letter-spacing:.04em;
     opacity:0;transform:translateY(16px) scale(.9);transition:opacity .2s ease,transform .25s ease}
-  body.menu #menu button{opacity:1;transform:none;transition:opacity .4s ease,transform .55s cubic-bezier(.3,1.4,.5,1);transition-delay:calc((4 - var(--n)) * 50ms)}
+  body.menu #menu button{opacity:1;transform:none;transition:opacity .4s ease,transform .55s cubic-bezier(.3,1.4,.5,1);transition-delay:calc((5 - var(--n)) * 50ms)}
   #menu button span{padding:9px 13px;border-radius:999px;background:rgba(var(--bg-rgb),.72);border:1px solid rgba(255,255,255,.1);white-space:nowrap}
   #menu button i{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--gold);
     background:rgba(251,247,239,.09);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .2s}
@@ -534,6 +534,19 @@
   .jar.shake{animation:shake .5s ease}
   @keyframes shake{20%{transform:rotate(-7deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(2deg)}}
   .jar-count{font:600 10.5px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+
+  /* días juntos */
+  .together{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 0 4px}
+  .together .days{font-family:var(--serif);font-style:italic;font-weight:500;font-size:clamp(84px,26vw,120px);line-height:.95;
+    background:linear-gradient(135deg,#ffe9c2,var(--gold) 45%,var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 6px 24px rgba(240,197,133,.35));animation:rise .8s ease backwards .1s}
+  .together .days-lbl{font:600 11px/1 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-top:10px}
+  .together .clock{display:flex;gap:8px;margin-top:22px;animation:rise .8s ease backwards .3s}
+  .together .clock div{min-width:64px;padding:10px 6px 8px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12)}
+  .together .clock b{display:block;font:600 22px/1 var(--sans);color:var(--ink);font-variant-numeric:tabular-nums}
+  .together .clock small{display:block;font:500 9.5px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .together .since{font-family:var(--hand);font-size:clamp(23px,6.4vw,27px);line-height:1.2;color:var(--ink);margin-top:22px;animation:rise .8s ease backwards .5s}
+  .together .since span{color:var(--rose)}
 
   /* escríbeme */
   .msg textarea{flex:none;width:100%;min-height:140px;resize:none;border-radius:16px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);
@@ -606,6 +619,7 @@
   <button id="mSound" style="--n:1"><span>Silenciar</span><i><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="waves" d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></i></button>
   <button data-open="jar" style="--n:2"><span>Cosas que me encantan de ti</span><i><svg viewBox="0 0 24 24"><path d="M8 3h8M9 3v3.2C6.5 7.3 5 9.5 5 12.5V18a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-5.5c0-3-1.5-5.2-4-6.3V3"/><path d="M12 17.2s-2.6-1.6-2.6-3.3a1.4 1.4 0 0 1 2.6-.7 1.4 1.4 0 0 1 2.6.7c0 1.7-2.6 3.3-2.6 3.3z"/></svg></i></button>
   <button data-open="album" style="--n:3"><span>Nuestros recuerdos</span><i><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg></i></button>
+  <button data-open="together" style="--n:5"><span>Días juntos</span><i><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5"/></svg></i></button>
   <button data-open="lyrics" style="--n:4"><span>Letra de la canción</span><i><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></i></button>
 </nav>
 <button id="fab" aria-label="Más cosas" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24" style="stroke-width:2"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -624,6 +638,20 @@
     <div class="note empty" id="note">Toca el tarro ♡</div>
     <button class="jar" id="jar" aria-label="Sacar un papelito"><i class="lid"></i><i class="glass" id="papers"></i></button>
     <div class="jar-count" id="jarCount"></div>
+  </div>
+</section>
+<section class="sheet" id="sh-together" hidden role="dialog" aria-label="Días juntos">
+  <div class="sh-head"><button class="ly-close" data-close aria-label="Cerrar">×</button>
+    <div class="ly-kicker">Desde aquel día</div><div class="sh-title">Llevamos juntos</div></div>
+  <div class="together">
+    <div class="days" id="tgDays">0</div>
+    <div class="days-lbl" id="tgDaysLbl">días</div>
+    <div class="clock">
+      <div><b id="tgH">00</b><small>horas</small></div>
+      <div><b id="tgM">00</b><small>min</small></div>
+      <div><b id="tgS">00</b><small>seg</small></div>
+    </div>
+    <p class="since">desde el <span>9 de septiembre de 2026</span>, a las 20:00 ♡</p>
   </div>
 </section>
 <section class="sheet msg" id="sh-msg" hidden role="dialog" aria-label="Escríbeme">
@@ -1320,12 +1348,14 @@
   function showSheet(name) {
     const sh = $('sh-' + name);
     if (name === 'album') paintAlbum();
+    if (name === 'together') startTogether();
     openSheet = sh; sh.hidden = false; sh.classList.remove('closing');
     body.classList.add('sheet-open'); uiPause();
   }
   function hideSheet(then) {
     if (!openSheet) return;
     const sh = openSheet; openSheet = null;
+    clearInterval(togetherT);
     sh.classList.add('closing'); body.classList.remove('sheet-open');
     setTimeout(() => { sh.hidden = true; sh.classList.remove('closing'); }, 320);
     if (then) { pausedByUI = false; then(); } else uiResume();
@@ -1359,6 +1389,20 @@
     try { song.currentTime = SONG_START; } catch (_) {}
     go(1);
   }));
+
+  // ---- días juntos: contador en directo desde que empezamos ----
+  const JUNTOS = new Date(2026, 8, 9, 20, 0);   // 09/09/2026 a las 20:00 (hora del móvil; los meses empiezan en 0)
+  let togetherT = 0;
+  function paintTogether() {
+    const t = Math.max(0, Math.floor((Date.now() - JUNTOS) / 1000));
+    const d = Math.floor(t / 86400), pad = n => String(n).padStart(2, '0');
+    $('tgDays').textContent = d;
+    $('tgDaysLbl').textContent = d === 1 ? 'día' : 'días';
+    $('tgH').textContent = pad(Math.floor(t % 86400 / 3600));
+    $('tgM').textContent = pad(Math.floor(t % 3600 / 60));
+    $('tgS').textContent = pad(t % 60);
+  }
+  function startTogether() { paintTogether(); clearInterval(togetherT); togetherT = setInterval(paintTogether, 1000); }
 
   // ---- tarro: cada toque saca un papelito al azar, sin repetir hasta vaciarlo ----
   const papers = $('papers'), note = $('note'), jar = $('jar'), jarCount = $('jarCount');
