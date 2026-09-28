@@ -465,7 +465,7 @@
   .finale p span{color:var(--rose)}
   #replay{pointer-events:auto;margin-top:14px;background:none;border:1px solid rgba(248,239,232,.28);color:var(--muted);font:500 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;padding:11px 18px;border-radius:999px}
 
-  /* ---------- botón "+" con las funciones (días juntos, letra, recuerdos, tarro, sonido, escríbeme) ---------- */
+  /* ---------- botón "+" con las funciones (la ronda, días juntos, letra, recuerdos, tarro, sonido, escríbeme) ---------- */
   #fab{position:fixed;z-index:33;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:42px;height:42px;border-radius:50%;padding:0;
     border:1px solid rgba(240,197,133,.45);background:rgba(var(--bg-rgb),.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--gold);
     display:grid;place-items:center;box-shadow:0 8px 26px -8px rgba(0,0,0,.7),0 0 18px -4px rgba(240,197,133,.35);
@@ -483,7 +483,7 @@
   body.menu #menu{pointer-events:auto}
   #menu button{display:flex;align-items:center;gap:11px;padding:0;border:0;background:none;color:var(--ink);font:500 13px/1 var(--sans);letter-spacing:.04em;
     opacity:0;transform:translateY(16px) scale(.9);transition:opacity .2s ease,transform .25s ease}
-  body.menu #menu button{opacity:1;transform:none;transition:opacity .4s ease,transform .55s cubic-bezier(.3,1.4,.5,1);transition-delay:calc((5 - var(--n)) * 50ms)}
+  body.menu #menu button{opacity:1;transform:none;transition:opacity .4s ease,transform .55s cubic-bezier(.3,1.4,.5,1);transition-delay:calc((6 - var(--n)) * 50ms)}
   #menu button span{padding:9px 13px;border-radius:999px;background:rgba(var(--bg-rgb),.72);border:1px solid rgba(255,255,255,.1);white-space:nowrap}
   #menu button i{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--gold);
     background:rgba(251,247,239,.09);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .2s}
@@ -548,6 +548,33 @@
   .together .since{font-family:var(--hand);font-size:clamp(23px,6.4vw,27px);line-height:1.2;color:var(--ink);margin-top:22px;animation:rise .8s ease backwards .5s}
   .together .since span{color:var(--rose)}
 
+  /* la ronda: marcador con cartas de la baraja española */
+  .ronda{display:flex;justify-content:center;align-items:flex-start;gap:clamp(12px,5vw,30px);padding:6px 0 4px}
+  .ronda .vs{align-self:center;font-family:var(--serif);font-style:italic;font-size:26px;color:var(--muted);margin-top:-30px}
+  .ronda .pl{display:flex;flex-direction:column;align-items:center;min-width:0;animation:rise .8s ease backwards}
+  .ronda .pl:last-child{animation-delay:.2s}
+  .ronda .name{font-family:var(--hand);font-size:clamp(28px,8vw,34px);line-height:1;color:var(--ink)}
+  .ronda .lead .name{color:var(--gold)}
+  .ronda .lead .name::after{content:" ♛";font-size:.7em}
+  .ronda .hand{--w:clamp(66px,21vw,92px);display:flex;justify-content:center;margin:14px 0 12px;min-height:calc(var(--w) / .652)}
+  /* img/baraja.png: 12 columnas (1…12) × 5 filas (oros, copas, espadas, bastos, reverso)
+     "Baraja española completa" de Basquetteur, Wikimedia Commons, CC BY-SA 3.0 */
+  .ronda .card{width:var(--w);aspect-ratio:208/319;flex:none;border-radius:8px;box-shadow:0 12px 24px -10px rgba(0,0,0,.9);
+    background:url(img/baraja.png) calc(var(--col) / 11 * 100%) calc(var(--row) / 4 * 100%) / 1200% 500% no-repeat;
+    transform:rotate(var(--r,0deg));animation:deal .7s cubic-bezier(.3,1.3,.5,1) backwards;animation-delay:calc(.25s + var(--k) * 180ms)}
+  .ronda .card + .card{margin-left:calc(var(--w) * -.4)}
+  @keyframes deal{from{opacity:0;transform:translateY(-70px) rotate(calc(var(--r,0deg) - 25deg)) scale(.7)}}
+  .ronda .pts{font:600 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .ronda .pts b{font-size:15px;color:var(--ink);letter-spacing:.05em}
+  /* botones − / + (solo al pulsar "Cambiar marcador") */
+  .ronda .edit{display:none;gap:10px;margin-top:14px}
+  .ronda.editing .edit{display:flex;animation:rise .4s ease}
+  .ronda .edit button{width:42px;height:42px;border-radius:50%;border:1px solid rgba(240,197,133,.45);background:rgba(251,247,239,.07);color:var(--gold);font:400 24px/1 var(--sans);transition:transform .15s}
+  .ronda .edit button:active{transform:scale(.88)}
+  .ronda .edit button:disabled{opacity:.3}
+  .ronda .loading{font:400 13px/1.5 var(--sans);color:var(--muted);padding:40px 0}
+  #rondaEdit.on{color:var(--bg);background:linear-gradient(135deg,var(--gold),var(--rose));border-color:transparent}
+
   /* ---------- pantalla de la letra ---------- */
   #lyrics{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:var(--bg);animation:lyIn .55s cubic-bezier(.2,.8,.2,1)}
   #lyrics[hidden]{display:none}
@@ -609,12 +636,20 @@
   <button data-open="jar" style="--n:1"><span>Cosas que me encantan de ti</span><i><svg viewBox="0 0 24 24"><path d="M8 3h8M9 3v3.2C6.5 7.3 5 9.5 5 12.5V18a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-5.5c0-3-1.5-5.2-4-6.3V3"/><path d="M12 17.2s-2.6-1.6-2.6-3.3a1.4 1.4 0 0 1 2.6-.7 1.4 1.4 0 0 1 2.6.7c0 1.7-2.6 3.3-2.6 3.3z"/></svg></i></button>
   <button data-open="album" style="--n:2"><span>Nuestros recuerdos</span><i><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg></i></button>
   <button data-open="together" style="--n:3"><span>Días juntos</span><i><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5"/></svg></i></button>
-  <button id="mSound" style="--n:4" disabled><span>Silenciar</span><i><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="waves" d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></i></button>
-  <button data-open="lyrics" style="--n:5" disabled><span>Letra de la canción</span><i><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></i></button>
+  <button data-open="ronda" style="--n:4"><span>La Ronda</span><i><svg viewBox="0 0 24 24"><rect x="3" y="6" width="10" height="15" rx="1.8" transform="rotate(-10 8 13.5)"/><rect x="11" y="4" width="10" height="15" rx="1.8" transform="rotate(8 16 11.5)"/></svg></i></button>
+  <button id="mSound" style="--n:5" disabled><span>Silenciar</span><i><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="waves" d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></i></button>
+  <button data-open="lyrics" style="--n:6" disabled><span>Letra de la canción</span><i><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></i></button>
 </nav>
 <button id="fab" aria-label="Más cosas" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24" style="stroke-width:2"><path d="M12 5v14M5 12h14"/></svg></button>
 
 <div id="sheetShade"></div>
+<section class="sheet" id="sh-ronda" hidden role="dialog" aria-label="La Ronda">
+  <div class="sh-head"><button class="ly-close" data-close aria-label="Cerrar">×</button>
+    <div class="ly-kicker">Partidas ganadas</div><div class="sh-title">La Ronda</div></div>
+  <div class="ronda" id="ronda"></div>
+  <p class="sh-hint" id="rondaHint"></p>
+  <button class="sh-link" id="rondaEdit" hidden>✎ Cambiar marcador</button>
+</section>
 <section class="sheet" id="sh-album" hidden role="dialog" aria-label="Nuestros recuerdos">
   <div class="sh-head"><button class="ly-close" data-close aria-label="Cerrar">×</button>
     <div class="ly-kicker">Salta a cualquiera</div><div class="sh-title">Nuestros recuerdos</div></div>
@@ -1355,6 +1390,7 @@
     const sh = $('sh-' + name);
     if (name === 'album') paintAlbum();
     if (name === 'together') startTogether();
+    if (name === 'ronda') openRonda();
     openSheet = sh; sh.hidden = false; sh.classList.remove('closing');
     body.classList.add('sheet-open'); uiPause();
   }
@@ -1396,6 +1432,83 @@
     try { song.currentTime = SONG_START; } catch (_) {}
     go(1);
   }));
+
+  // ---- la ronda: el marcador de partidas, pintado con cartas de la baraja española ----
+  // El resultado se guarda en Supabase (tabla "ronda", una sola fila) para que se vea igual desde cualquier móvil.
+  // Para sumar/restar se usa la función ronda_sumar, que lo hace en el servidor: si los dos tocáis a la vez no se pisa.
+  const RONDA_DB = { url: 'https://vkocwactqjzwosbdivfb.supabase.co', key: 'sb_publishable_K4Xp0EESzAdcLBQscf05Pg_E8uGKneJ' };   // clave pública, puede estar a la vista
+  const JUGADORES = [['Carol', 'carol'], ['Fer', 'fer']];   // nombre que se ve · columna en la tabla
+  let ronda = null, rondaPending = 0;
+  async function rondaApi(path, body) {
+    const r = await fetch(`${RONDA_DB.url}/rest/v1/${path}`, {
+      method: body ? 'POST' : 'GET', cache: 'no-store',
+      headers: { apikey: RONDA_DB.key, 'Content-Type': 'application/json' },
+      body: body && JSON.stringify(body)
+    });
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    return Array.isArray(j) ? j[0] : j;
+  }
+  const PALOS = ['oros', 'copas', 'espadas', 'bastos'];   // mismo orden que las filas de img/baraja.png
+  // reparte n en el mínimo de cartas (del 1 al 12) lo más parecidas posible: 13 → 7+6, 25 → 9+8+8
+  function splitCards(n) {
+    if (n <= 0) return [];
+    const k = Math.ceil(n / 12), base = Math.floor(n / k);
+    return Array.from({ length: k }, (_, i) => base + (i < n % k ? 1 : 0));
+  }
+  // v = 0 es el reverso (carta boca abajo); si no, un palo al azar
+  const cardHTML = (v, k, of) => {
+    const row = v ? Math.floor(Math.random() * 4) : 4, col = v ? v - 1 : 1;
+    return `<i class="card" role="img" aria-label="${v ? `${v} de ${PALOS[row]}` : 'carta boca abajo'}" style="--row:${row};--col:${col};--k:${k};--r:${of > 1 ? (k - (of - 1) / 2) * 10 : 0}deg"></i>`;
+  };
+  // al abrir: se lee el marcador y se reparten las cartas
+  async function openRonda() {
+    const box = $('ronda');
+    box.classList.remove('editing'); $('rondaEdit').classList.remove('on'); $('rondaEdit').hidden = true;
+    box.innerHTML = '<p class="loading">Barajando…</p>'; $('rondaHint').textContent = '';
+    try { ronda = await rondaApi('ronda?id=eq.1&select=carol,fer'); }
+    catch (_) { box.innerHTML = '<p class="loading">No he podido cargar el marcador.<br>¿Hay internet?</p>'; return; }
+    box.innerHTML = JUGADORES.map(([name, col], i) =>
+      `${i ? '<span class="vs">vs</span>' : ''}<div class="pl" data-col="${col}"><div class="name">${esc(name)}</div><div class="hand"></div><div class="pts"></div>` +
+      `<div class="edit"><button data-d="-1" aria-label="Quitar una partida a ${esc(name)}">−</button><button data-d="1" aria-label="Sumar una partida a ${esc(name)}">+</button></div></div>`).join('');
+    $('rondaEdit').hidden = false;
+    paintRonda();
+  }
+  // pinta el marcador; con only solo se vuelven a repartir las cartas de ese jugador
+  function paintRonda(only) {
+    const top = Math.max(...JUGADORES.map(([, c]) => ronda[c])), tie = JUGADORES.every(([, c]) => ronda[c] === top);
+    for (const pl of $('ronda').querySelectorAll('.pl')) {
+      const col = pl.dataset.col, n = ronda[col];
+      pl.classList.toggle('lead', n === top && !tie);
+      pl.querySelector('.pts').innerHTML = `<b>${n}</b> ${n === 1 ? 'partida' : 'partidas'}`;
+      pl.querySelector('[data-d="-1"]').disabled = n <= 0;
+      if (only && only !== col) continue;
+      const vals = splitCards(n);
+      pl.querySelector('.hand').innerHTML = vals.length ? vals.map((v, k) => cardHTML(v, k, vals.length)).join('') : cardHTML(0, 0, 1);
+    }
+    const [[a, ca], [b, cb]] = JUGADORES, x = ronda[ca], y = ronda[cb];
+    $('rondaHint').textContent = tie ? 'Empate… ¿la de desempate? 😏' : `${x > y ? a : b} va ganando ${Math.max(x, y)}–${Math.min(x, y)} ♡`;
+  }
+  $('rondaEdit').addEventListener('click', e => {
+    e.currentTarget.classList.toggle('on', $('ronda').classList.toggle('editing'));
+  });
+  // − / +: se ve al momento y se guarda en el servidor; cuando responde la última petición, manda lo que diga él
+  $('ronda').addEventListener('click', async e => {
+    const btn = e.target.closest('.edit button');
+    if (!btn) return;
+    const col = btn.closest('.pl').dataset.col, d = +btn.dataset.d;
+    if (ronda[col] + d < 0) return;
+    ronda[col] += d; paintRonda(col);
+    rondaPending++;
+    let saved = null;
+    try { saved = await rondaApi('rpc/ronda_sumar', { quien: col, cuanto: d }); } catch (_) {}
+    if (--rondaPending) return;
+    if (saved) { const changed = JUGADORES.find(([, c]) => saved[c] !== ronda[c]); ronda = saved; if (changed) paintRonda(changed[1]); }
+    else {
+      try { ronda = await rondaApi('ronda?id=eq.1&select=carol,fer'); paintRonda(); } catch (_) {}
+      $('rondaHint').textContent = 'No se ha podido guardar, prueba otra vez';
+    }
+  });
 
   // ---- días juntos: contador en directo desde que empezamos ----
   const JUNTOS = new Date(2026, 8, 9, 20, 0);   // 09/09/2026 a las 20:00 (hora del móvil; los meses empiezan en 0)
