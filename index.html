@@ -648,7 +648,7 @@
     <div class="ly-kicker">Partidas ganadas</div><div class="sh-title">La Ronda</div></div>
   <div class="ronda" id="ronda"></div>
   <p class="sh-hint" id="rondaHint"></p>
-  <button class="sh-link" id="rondaEdit" hidden>✎ Cambiar marcador</button>
+  <button class="sh-link" id="rondaEdit" hidden>✎ Editar</button>
 </section>
 <section class="sheet" id="sh-album" hidden role="dialog" aria-label="Nuestros recuerdos">
   <div class="sh-head"><button class="ly-close" data-close aria-label="Cerrar">×</button>
@@ -1486,8 +1486,6 @@
       const vals = splitCards(n);
       pl.querySelector('.hand').innerHTML = vals.length ? vals.map((v, k) => cardHTML(v, k, vals.length)).join('') : cardHTML(0, 0, 1);
     }
-    const [[a, ca], [b, cb]] = JUGADORES, x = ronda[ca], y = ronda[cb];
-    $('rondaHint').textContent = tie ? 'Empate… ¿la de desempate? 😏' : `${x > y ? a : b} va ganando ${Math.max(x, y)}–${Math.min(x, y)} ♡`;
   }
   $('rondaEdit').addEventListener('click', e => {
     e.currentTarget.classList.toggle('on', $('ronda').classList.toggle('editing'));
@@ -1503,7 +1501,10 @@
     let saved = null;
     try { saved = await rondaApi('rpc/ronda_sumar', { quien: col, cuanto: d }); } catch (_) {}
     if (--rondaPending) return;
-    if (saved) { const changed = JUGADORES.find(([, c]) => saved[c] !== ronda[c]); ronda = saved; if (changed) paintRonda(changed[1]); }
+    if (saved) {
+      const changed = JUGADORES.find(([, c]) => saved[c] !== ronda[c]); ronda = saved; if (changed) paintRonda(changed[1]);
+      $('rondaHint').textContent = '';   // borra el aviso de error si lo había
+    }
     else {
       try { ronda = await rondaApi('ronda?id=eq.1&select=carol,fer'); paintRonda(); } catch (_) {}
       $('rondaHint').textContent = 'No se ha podido guardar, prueba otra vez';
