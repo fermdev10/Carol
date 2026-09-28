@@ -469,9 +469,8 @@
   #fab{position:fixed;z-index:33;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:42px;height:42px;border-radius:50%;padding:0;
     border:1px solid rgba(240,197,133,.45);background:rgba(var(--bg-rgb),.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--gold);
     display:grid;place-items:center;box-shadow:0 8px 26px -8px rgba(0,0,0,.7),0 0 18px -4px rgba(240,197,133,.35);
-    opacity:0;pointer-events:none;transition:opacity 1s,background .35s,color .35s}
+    opacity:.92;transition:opacity 1s,background .35s,color .35s}
   #fab svg{width:22px;height:22px;transition:transform .5s cubic-bezier(.3,1.4,.5,1)}
-  body.started #fab{opacity:.92;pointer-events:auto}
   body.menu #fab{opacity:1;color:var(--bg);background:linear-gradient(135deg,#ffe9c2,var(--gold) 45%,var(--rose))}
   body.menu #fab svg{transform:rotate(135deg)}
   /* un par de ondas al principio para que se note que está ahí, y luego se queda quieto */
@@ -491,6 +490,7 @@
   #menu button:active i{transform:scale(.9)}
   #menu svg,.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   #mSound.off i{color:var(--muted)}
+  body.menu #menu button:disabled{opacity:.35}   /* silenciar y letra, hasta que empiece la canción */
 
   /* ---------- paneles que suben desde abajo ---------- */
   #sheetShade{position:fixed;inset:0;z-index:49;background:rgba(8,2,6,.6);opacity:0;pointer-events:none;transition:opacity .35s}
@@ -547,15 +547,6 @@
   .together .clock small{display:block;font:500 9.5px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:6px}
   .together .since{font-family:var(--hand);font-size:clamp(23px,6.4vw,27px);line-height:1.2;color:var(--ink);margin-top:22px;animation:rise .8s ease backwards .5s}
   .together .since span{color:var(--rose)}
-
-  /* escríbeme */
-  .msg textarea{flex:none;width:100%;min-height:140px;resize:none;border-radius:16px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);
-    color:var(--ink);font:500 23px/1.25 var(--hand);padding:14px 16px;outline:none;user-select:text;-webkit-user-select:text}
-  .msg textarea::placeholder{color:rgba(248,239,232,.38)}
-  .msg textarea:focus{border-color:rgba(240,197,133,.6)}
-  .msg .send{flex:none;margin-top:14px;height:50px;border:0;border-radius:999px;font:600 12.5px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--bg);
-    background:linear-gradient(135deg,#ffe9c2,var(--gold) 45%,var(--rose));box-shadow:0 10px 30px -12px rgba(240,197,133,.7);transition:opacity .3s}
-  .msg .send:disabled{opacity:.35}
 
   /* ---------- pantalla de la letra ---------- */
   #lyrics{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:var(--bg);animation:lyIn .55s cubic-bezier(.2,.8,.2,1)}
@@ -615,12 +606,11 @@
 <!-- Botón "+": abre las funciones sin cortar la experiencia (se pausa mientras están abiertas) -->
 <div id="menuShade"></div>
 <nav id="menu" aria-label="Más cosas">
-  <button data-open="msg" style="--n:0"><span>Escríbeme</span><i><svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-11 6.6L4 19.5l1.4-4.4A7.5 7.5 0 1 1 20 11.5z"/></svg></i></button>
-  <button id="mSound" style="--n:1"><span>Silenciar</span><i><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="waves" d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></i></button>
-  <button data-open="jar" style="--n:2"><span>Cosas que me encantan de ti</span><i><svg viewBox="0 0 24 24"><path d="M8 3h8M9 3v3.2C6.5 7.3 5 9.5 5 12.5V18a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-5.5c0-3-1.5-5.2-4-6.3V3"/><path d="M12 17.2s-2.6-1.6-2.6-3.3a1.4 1.4 0 0 1 2.6-.7 1.4 1.4 0 0 1 2.6.7c0 1.7-2.6 3.3-2.6 3.3z"/></svg></i></button>
-  <button data-open="album" style="--n:3"><span>Nuestros recuerdos</span><i><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg></i></button>
-  <button data-open="together" style="--n:5"><span>Días juntos</span><i><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5"/></svg></i></button>
-  <button data-open="lyrics" style="--n:4"><span>Letra de la canción</span><i><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></i></button>
+  <button data-open="jar" style="--n:1"><span>Cosas que me encantan de ti</span><i><svg viewBox="0 0 24 24"><path d="M8 3h8M9 3v3.2C6.5 7.3 5 9.5 5 12.5V18a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-5.5c0-3-1.5-5.2-4-6.3V3"/><path d="M12 17.2s-2.6-1.6-2.6-3.3a1.4 1.4 0 0 1 2.6-.7 1.4 1.4 0 0 1 2.6.7c0 1.7-2.6 3.3-2.6 3.3z"/></svg></i></button>
+  <button data-open="album" style="--n:2"><span>Nuestros recuerdos</span><i><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg></i></button>
+  <button data-open="together" style="--n:3"><span>Días juntos</span><i><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5"/></svg></i></button>
+  <button id="mSound" style="--n:4" disabled><span>Silenciar</span><i><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="waves" d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></i></button>
+  <button data-open="lyrics" style="--n:5" disabled><span>Letra de la canción</span><i><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></i></button>
 </nav>
 <button id="fab" aria-label="Más cosas" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24" style="stroke-width:2"><path d="M12 5v14M5 12h14"/></svg></button>
 
@@ -653,13 +643,6 @@
     </div>
     <p class="since">desde el <span>9 de septiembre de 2026</span>, a las 20:00 ♡</p>
   </div>
-</section>
-<section class="sheet msg" id="sh-msg" hidden role="dialog" aria-label="Escríbeme">
-  <div class="sh-head"><button class="ly-close" data-close aria-label="Cerrar">×</button>
-    <div class="ly-kicker">Para Fer</div><div class="sh-title">Escríbeme algo</div></div>
-  <textarea id="msgText" maxlength="1500" placeholder="Lo que has sentido, lo que te ha hecho gracia, lo que quieras…"></textarea>
-  <button class="send" id="msgSend" disabled>Enviar</button>
-  <p class="sh-hint">Se abrirá WhatsApp con tu mensaje listo para mandármelo.</p>
 </section>
 
 <!-- Pantalla de la letra (la letra y la traducción se rellenan en LETRA, en el código de abajo) -->
@@ -916,7 +899,7 @@
       <i style="--x:44%;--d:8s;--t:7.2s;--s:.95"></i><i style="--x:70%;--d:7.6s;--t:8.2s;--s:.8"></i>
     </div>
     <div class="tag"><span>✦ Recuerdo nº 13</span><b>El más importante</b></div>
-    <div class="date split2">10 · 09 · 2026</div>
+    <div class="date split2">09 · 09 · 2026</div>
     <div class="shrine">
       <img src="img/novios.jpg" alt="">
       <span class="lbl" style="left:8%;top:30%;--d:6.6s">el pulpito</span>
@@ -1132,7 +1115,6 @@
   stage.addEventListener('pointercancel', () => { clearTimeout(holdT); downAt = 0; resumeExp(); });
   stage.addEventListener('contextmenu', e => e.preventDefault());
   addEventListener('keydown', e => {
-    if (e.target.closest?.('textarea,input')) return;   // escribiendo un mensaje
     if (!lyrics.hidden) { if (e.key === 'Escape') closeLyrics(); return; }
     if (openSheet) { if (e.key === 'Escape') hideSheet(); return; }
     if (body.classList.contains('menu')) { if (e.key === 'Escape') closeMenu(); return; }
@@ -1161,7 +1143,9 @@
 
   // ---- inicio: al tocar el disco baja la aguja, gira y empieza la canción ----
   let starting = false;
-  document.getElementById('start').addEventListener('click', () => {
+  // silenciar y la letra solo tienen sentido cuando ya suena la canción
+  const enableSongButtons = () => document.querySelectorAll('#mSound,#menu [data-open="lyrics"]').forEach(b => b.disabled = false);
+  function start(n = 1) {
     if (starting) return;
     starting = true;
     try { song.currentTime = SONG_START; } catch (_) {}
@@ -1175,9 +1159,11 @@
     setTimeout(() => {
       body.classList.add('started');
       document.getElementById('bloom').classList.add('on');   // destello de luz al empezar
-      go(1);
+      enableSongButtons();
+      go(n);
     }, 1700);
-  });
+  }
+  document.getElementById('start').addEventListener('click', () => start());
   let userPausedSong = false;
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && body.classList.contains('started') && song.paused && !userPausedSong) song.play().catch(() => {});
@@ -1353,7 +1339,6 @@
     'Que me mires con cara de pena para que haga lo que quieres.',
     '😉...'
   ];
-  const WHATSAPP = '34689237681';
 
   const $ = id => document.getElementById(id);
   const fab = $('fab');
@@ -1404,9 +1389,10 @@
   }
   album.addEventListener('click', e => {
     const b = e.target.closest('button');
-    if (b) hideSheet(() => go(+b.dataset.n));
+    if (b) hideSheet(() => idx > 0 ? go(+b.dataset.n) : start(+b.dataset.n));   // desde el inicio, arranca también la canción
   });
   $('fromStart').addEventListener('click', () => hideSheet(() => {
+    if (idx <= 0) return start();
     try { song.currentTime = SONG_START; } catch (_) {}
     go(1);
   }));
@@ -1468,20 +1454,6 @@
     mSound.classList.toggle('off', song.muted);
     mSound.querySelector('span').textContent = song.muted ? 'Activar sonido' : 'Silenciar';
     mSound.querySelector('.waves').setAttribute('d', song.muted ? 'M16 9.5l5 5M21 9.5l-5 5' : 'M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11');
-  });
-
-  // ---- escríbeme: el borrador se guarda en su móvil hasta que lo mande ----
-  const msgText = $('msgText'), msgSend = $('msgSend');
-  try { msgText.value = localStorage.getItem('carol-msg') || ''; } catch (_) {}
-  const syncMsg = () => { msgSend.disabled = !msgText.value.trim(); };
-  syncMsg();
-  msgText.addEventListener('input', () => {
-    syncMsg();
-    try { localStorage.setItem('carol-msg', msgText.value); } catch (_) {}
-  });
-  msgSend.addEventListener('click', () => {
-    const text = msgText.value.trim();
-    if (text) window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`, '_blank');
   });
 
   // ---- regalo ----
@@ -1583,7 +1555,7 @@
 
   // para revisar: index.html#10 salta directamente a la escena 10 (sin música)
   const jump = parseInt(location.hash.slice(1), 10);
-  if (jump > 0) { body.classList.add('started'); go(jump); } else go(0);
+  if (jump > 0) { body.classList.add('started'); enableSongButtons(); go(jump); } else go(0);
 })();
 </script>
 </body>
